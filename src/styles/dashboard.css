@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
+
+
+.mainhead {
+    padding-top: 10px;
+    padding-left: 150px;
+    padding-right: 150px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+}
+
+.tabsdiv {
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+}
+
+.createbtn {
+    border-radius: 400px;
+    background-color: #006BFF;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 13px;
+    padding: 10px 22px;
+    transition: all 0.5s;
+    cursor: pointer;
+    font-weight: 550;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .header {
+    font-family: 'Nunito', sans-serif;
+    color: #1B1A1A;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .MuiBox-root-53 {
+      padding: 0px !important;
+  }
+
+  .dropdownitemone {
+    font-family: 'ProximaNova',sans-serif;
+    color: #1B1A1A;
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0 !important;
+  }
+
+  .dropdownitemtwo {
+    color: #8F8E8E;
+    font-family: 'ProximaNova',sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    margin: 0 !important;
+    width: 40vh;
+  }

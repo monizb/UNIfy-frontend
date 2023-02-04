@@ -1,0 +1,152 @@
+
+@font-face {
+  font-family:"ProximaNova";
+  src: url('../fonts/pn.ttf') format("truetype");
+}
+
+
+.divider {
+  padding: 0px 150px;
+}
+
+.searchheader {
+    padding: 5px 150px;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    
+}
+
+.events2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    width: fit-content;
+    text-align:center;
+}
+
+.addbtn {
+    border-radius: 400px;
+    background-color: white;
+    height: fit-content;
+    border: 2px solid #006BFF;
+    color: #006BFF;
+    text-align: center;
+    font-size: 13px;
+    padding: 10px 22px;
+    transition: all 0.5s;
+    cursor: pointer;
+    font-weight: 550;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .viewbtn {
+    border-radius: 400px;
+    background-color: white;
+    height: fit-content;
+    border: 2px solid #006BFF;
+    color: #006BFF;
+    text-align: center;
+    font-size: 11px;
+    padding: 4px 22px;
+    transition: all 0.5s;
+    cursor: pointer;
+    font-weight: 550;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .sharebtn {
+      border-radius: 400px;
+      background-color: #006BFF;
+      height: fit-content;
+      color: white;
+      border: none;
+      text-align: center;
+      font-size: 11px;
+      padding: 8px 22px;
+      transition: all 0.5s;
+      cursor: pointer;
+      font-weight: 550;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+
+  .name2 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #1A1A1A;
+}
+
+.indevent {
+  box-shadow: 0 1px 6px 0 rgb(0 0 0 / 10%);
+  border: 1px solid #dadada;
+  border-radius: 5px;
+  height: fit-content;
+}
+
+.headercard {
+  font-family: 'ProximaNova',sans-serif;
+  color: #1B1A1A;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.copytext {
+  font-family: 'ProximaNova',sans-serif;
+  color: #006BFF;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.subheadercard {
+  color: #8F8E8E;
+  font-family: 'ProximaNova',sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.headername2 {
+    font-family: 'Nunito', sans-serif;
+    color: #1B1A1A;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .calendlink {
+    
+    color: #006BFF;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+
+  .avatarside {
+      display: flex;
+      align-items: center;
+  }
+
+  .loclogo {
+    width: auto;
+    height: 20px;
+    margin-right: 15px;
+    object-fit: cover;
+    float: left;
+  }
+
+  .meetingname {
+    font-family: 'ProximaNova',sans-serif;
+    font-size: 17px;
+    color: #1B1A1A;
+  }
+
+  .MuiSelect-select {
+    display: flex;
+  }
