@@ -48,9 +48,9 @@ function Alert(props) {
 
 const BlueRadio = withStyles({
   root: {
-    color: "#006BFF",
+    color: "#100615",
     "&$checked": {
-      color: "#006BFF",
+      color: "#100615",
     },
   },
   checked: {},
@@ -58,9 +58,9 @@ const BlueRadio = withStyles({
 
 const BlueCheckbox = withStyles({
   root: {
-    color: "#006BFF",
+    color: "#100615",
     "&$checked": {
-      color: "#006BFF",
+      color: "#100615",
     },
   },
   checked: {},
@@ -302,7 +302,7 @@ function CreateEvent() {
           }}
         >
           {" "}
-          <ArrowBackIcon style={{ color: "#006BFF", fontSize: "25px" }} />
+          <ArrowBackIcon style={{ color: "#100615", fontSize: "25px" }} />
         </Button>
         <h1 className="headercard">Add New Event</h1>
         {/* <FormControlLabel

@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 //Config
 const appAdd = '645d98c788a974b198d7c448992029a2920475e1';
 
-let auth = new AuthProvider(appAdd);
+let auth = new AuthProvider(appAdd, {
+  alwaysVisible: false
+});
 
 function useArcanaAuth() {
   const [initialized, setInitialized] = useState(false);

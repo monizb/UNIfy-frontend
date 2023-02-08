@@ -19,7 +19,7 @@ function Loading() {
     return (
         <div>
             <Backdrop className={classes.backdrop} open={open}>
-                <CircularProgress color="#006BFF" style={{ color: "#006BFF" }} />
+                <CircularProgress color="#100615" style={{ color: "#100615" }} />
             </Backdrop>
         </div>
     )

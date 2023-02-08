@@ -99,7 +99,7 @@ body {
     padding-bottom: 0.75em;
     border-radius: 1000px;
     border: 8px solid white !important;
-    color: #006BFF;
+    color: #100615;
     font-weight: bold;
     /* margin: 4px !important; */
     background-color: #EEF5FF;
@@ -134,7 +134,7 @@ abbr[title] {
     background: #a9d4ff;
   }
   .react-calendar__tile--active {
-    background: #006BFF;
+    background: #100615;
     color: white;
     font-weight: bold;
   }

@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "white",
     },
     customTabIndicator: {
-        backgroundColor: "#006BFF"
+        backgroundColor: "#100615"
     }
 }));
 

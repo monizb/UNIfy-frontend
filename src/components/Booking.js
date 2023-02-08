@@ -119,7 +119,7 @@ export default function Booking() {
                                 <Grid item xs={6}>
                                     <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: `5px solid ${event.color}` }}><p className="select" style={{ marginBottom: "25px" }}>{event.title}</p>
                                         <div style={{ width: "100%", float: "right" }}>
-                                            <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#006BFF", fontSize: "25px" }} /></Button>
+                                            <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
                                         </div>
 
                                     </Card>
@@ -130,35 +130,35 @@ export default function Booking() {
                         {/* <Grid item xs={6}>
                             <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #FF4F01" }}><p className="select" style={{ marginBottom: "25px" }}>30 min Product Demo</p>
                                 <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#006BFF", fontSize: "25px" }} /></Button>
+                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
                                 </div>
                             </Card>
                         </Grid>
                         <Grid item xs={6}>
                             <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #FA275F" }}><p className="select" style={{ marginBottom: "25px" }}>Technical Support</p>
                                 <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#006BFF", fontSize: "25px" }} /></Button>
+                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
                                 </div>
                             </Card>
                         </Grid>
                         <Grid item xs={6}>
                             <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #0299FF" }}><p className="select" style={{ marginBottom: "25px" }}>Customer Success Stories</p>
                                 <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#006BFF", fontSize: "25px" }} /></Button>
+                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
                                 </div>
                             </Card>
                         </Grid> */}
                         {/* <Grid item xs={6}>
                             <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #0299FF" }}><p className="select">Customer Success Stories</p>
                                 <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(1)}><ArrowForwardIcon style={{ color: "#006BFF", fontSize: "25px" }} /></Button>
+                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(1)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
                                 </div>
                             </Card>
                         </Grid>
                         <Grid item xs={6}>
                             <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #0299FF" }}><p className="select">Customer Success Stories</p>
                                 <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(1)}><ArrowForwardIcon style={{ color: "#006BFF", fontSize: "25px" }} /></Button>
+                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(1)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
                                 </div>
                             </Card>
                         </Grid> */}
@@ -178,7 +178,7 @@ export default function Booking() {
                     <Button style={{ backgroundColor: "#EEF5FF" }} onClick={() => {
                         history.push("/" + window.location.pathname.split("/")[1])
                         setStage(1)
-                    }} > <ArrowBackIcon style={{ color: "#006BFF", fontSize: "25px" }} /></Button>
+                    }} > <ArrowBackIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
                     <div style={{ marginTop: "30px" }}>
                         <Avatar src="https://i.pinimg.com/280x280_RS/67/99/e1/6799e1b5122d4dfeb9acad3269828916.jpg" style={{ width: "70px", height: "70px" }} />
                         <p className="para4">{decodeURIComponent(window.location.pathname.split("/")[1])}</p>
@@ -212,7 +212,7 @@ export default function Booking() {
                             <p className="timezone">Slots Available</p>
                         </div>
                         <div style={{ display: "flex" }}>
-                            <TimelineDot style={{ backgroundColor: "#006BFF", boxShadow: "none", marginTop: "13px", marginRight: "5px", marginLeft: "15px" }} />
+                            <TimelineDot style={{ backgroundColor: "#100615", boxShadow: "none", marginTop: "13px", marginRight: "5px", marginLeft: "15px" }} />
                             <p className="timezone">Selected Day</p>
                         </div>
                     </div>
@@ -233,7 +233,7 @@ export default function Booking() {
 
                 </div>
             </div>}
-            <div style={{ display: "flex", width: "100%", margin: "auto", padding: "0px", backgroundColor: "#006BFF", justifyContent: "center", height: "40vh" }}>
+            <div style={{ display: "flex", width: "100%", margin: "auto", padding: "0px", backgroundColor: "#100615", justifyContent: "center", height: "40vh" }}>
                 <div style={{ justifyContent: "center", display: "flex", verticalAlign: "middle" }}>
                     <FlashOnIcon style={{ color: "orange", fontSize: "25PX", marginTop: "30px" }} />
                     <p className="powered">by <span className="poweredlogo" onClick={() => history.push("/")}>UNIfy</span></p>

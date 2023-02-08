@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     title: {
         display: 'none',
         font: font,
-        color: "#006BFF",
+        color: "#100615",
         [theme.breakpoints.up('sm')]: {
             display: 'block',
         },
@@ -183,7 +183,7 @@ function Appbar() {
                     <div className={classes.sectionDesktop}>
                         {state.logged_in ?
                             <div>
-                                <Button variant="contained" style={{ color: "white", borderColor: "white", backgroundColor: "#006BFF", marginRight: 10, fontWeight: 700, paddingLeft: "24px", paddingRight: "24px", borderRadius: 1000, textTransform: "none", height: "48px", boxShadow: "none" }} onClick={redirect}>
+                                <Button variant="contained" style={{ color: "white", borderColor: "white", backgroundColor: "#100615", marginRight: 10, fontWeight: 700, paddingLeft: "24px", paddingRight: "24px", borderRadius: 1000, textTransform: "none", height: "48px", boxShadow: "none" }} onClick={redirect}>
                                     My Account
       </Button>
                                 <IconButton aria-label="show 4 new mails" color="inherit" onClick={logout}>
@@ -192,7 +192,7 @@ function Appbar() {
                             </div>
                             :
                             <div>
-                                <Button variant="contained" style={{ color: "white", borderColor: "white", backgroundColor: "#006BFF", marginRight: 10, fontWeight: 700, paddingLeft: "24px", paddingRight: "24px", borderRadius: 1000, textTransform: "none", height: "48px", boxShadow: "none" }} onClick={handleLogin}>
+                                <Button variant="contained" style={{ color: "white", borderColor: "white", backgroundColor: "#100615", marginRight: 10, fontWeight: 700, paddingLeft: "24px", paddingRight: "24px", borderRadius: 1000, textTransform: "none", height: "48px", boxShadow: "none" }} onClick={handleLogin}>
                                     Login
       </Button>
                             </div>

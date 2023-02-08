@@ -33,9 +33,9 @@ const useStyles = makeStyles((theme) => ({
 
 const BlueCheckbox = withStyles({
     root: {
-        color: "#006BFF",
+        color: "#100615",
         '&$checked': {
-            color: "#006BFF",
+            color: "#100615",
         },
     },
     checked: {},
@@ -77,7 +77,7 @@ function Events() {
                     <div className="avatarside">
                         <Avatar src={localStorage.getItem("photo_url")}></Avatar>
                         <div style={{ margin: "15px" }}>
-                            <h1 className="headername2">{localStorage.getItem("name")}<br /><span className="calendlink"><a target="blank" href={window.location.origin + "/" + slug} style={{ textDecoration: "none", color: "#006BFF" }}>{"https://" + window.location.hostname + "/" + slug}</a></span></h1>
+                            <h1 className="headername2">{localStorage.getItem("name")}<br /><span className="calendlink"><a target="blank" href={window.location.origin + "/" + slug} style={{ textDecoration: "none", color: "#100615" }}>{"https://" + window.location.hostname + "/" + slug}</a></span></h1>
                         </div>
                     </div>
 
@@ -109,7 +109,7 @@ function Events() {
                                         <Divider />
                                         <div style={{ padding: "10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                             <div style={{ display: "flex", alignItems: "center" }}>
-                                                <FilterNoneIcon style={{ color: "#006BFF", marginRight: "5px", fontSize: "15px" }} />
+                                                <FilterNoneIcon style={{ color: "#100615", marginRight: "5px", fontSize: "15px" }} />
                                                 <p className="copytext">Copy Link</p>
                                             </div>
                                             <button className="sharebtn">Share</button>
