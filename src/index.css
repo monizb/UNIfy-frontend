@@ -1,3 +1,17 @@
+@font-face {
+  font-family: 'Stolzl';
+  src: url('./fonts//Stolzl-Bold.woff');
+}
+
+@font-face {
+  font-family: 'StolzlR';
+  src: url('./fonts//Stolzl-Regular.woff');
+}
+
+* {
+  font-family: 'StolzlR';
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

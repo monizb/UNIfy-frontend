@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useHistory } from "react-router-dom";
 import error from "../images/error.png"
 import "../styles/front.css"
+import Logo from './Logo';
 
 function Errorpage() {
     const history = useHistory();
@@ -10,7 +11,7 @@ function Errorpage() {
     }, []);
     return (
         <div style={{ margin: "auto", width: "fit-content", justifyContent: "center", textAlign: "center" }}>
-            <p className="logo">UNIfy</p>
+            <Logo/>
 
             <img src={error} style={{ width: "auto", height: "150px", marginTop: "20px" }} />
             <p className="errheader">Whoops! We could not find this one</p>

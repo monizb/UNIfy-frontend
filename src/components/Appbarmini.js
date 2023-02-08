@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Logomini from "./Logomini"
+import Logo from './Logo';
 import { Redirect } from "react-router-dom";
 import firebase from "firebase"; import { useHistory } from "react-router-dom";
 
@@ -143,7 +144,7 @@ function Appbar() {
         <div className={classes.grow}>
             <AppBar position="static" className={classes.appbar}>
                 <Toolbar>
-                    <Logomini />
+                    <Logo/>
                     <div className={classes.grow} />
                     <div className={classes.sectionDesktop}>
                         {state.logged_in ?

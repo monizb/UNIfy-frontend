@@ -11,6 +11,7 @@ import Logo from "./Logo"
 import firebase from "firebase"
 import { useHistory } from "react-router-dom";
 import { firebaseAuth } from '../configs/firebase'
+import "../styles/appbar.css"
 
 const font = "'Pattaya', sans-serif";
 

@@ -1,13 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Pattaya&display=swap');
 
-.logo {
-    font-family: 'Pattaya', sans-serif;
-    color:#006BFF;
-    font-size: 45px;
-}
-
-.logomini {
-    font-family: 'Pattaya', sans-serif;
-    color:#006BFF;
-    font-size: 25px;
+.logo-main {
+    font-size: 60px;
+    color: #100615;
 }

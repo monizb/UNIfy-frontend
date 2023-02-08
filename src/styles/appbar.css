@@ -1,0 +1,61 @@
+.login-main {
+    border-radius: 5px;
+    padding: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    align-items: center;
+    text-align: center;
+}
+
+.login-box-main {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    display: flex;
+}
+
+.login-box-main button {
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    margin: 10px;
+}
+
+.google {
+    background-color: #f44336;
+}
+
+.twitch {
+    background-color: #8944f4;
+}
+
+.discord {
+    background-color: #7289da;
+}
+
+.twitter {
+    background-color: #1da1f2;
+}
+
+.linkbtn {
+    background-color: #100615;
+    white-space: nowrap;
+}
+
+.email-box {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 12px;
+    width: 100%;
+    margin: 10px;
+    font-size: 18px;
+}
+
+.tip-style {
+    white-space: nowrap;
+}
