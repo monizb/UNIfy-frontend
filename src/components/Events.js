@@ -15,6 +15,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import FilterNoneIcon from '@material-ui/icons/FilterNone';
+import jwt from 'jwt-decode'
 
 const useStyles = makeStyles((theme) => ({
     backdrop: {
@@ -25,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
     parent: {
         position: "relative",
         width: "100%",
-        height: 200,
         backgroundColor: "white",
         zIndex: 0,
     }
@@ -47,18 +47,15 @@ function Events() {
     const [state, setState] = useContext(Context);
     const [events, setEvents] = React.useState([]);
     const [slug, setSlug] = React.useState();
+    const [user, setUser] = React.useState({
+        email: "",
+        image: "",
+        userName: ""
+    });
 
     useEffect(() => {
-        axios.get('/auth/user-events', {
-            headers: {
-                'Authorization': `Bearer ` + firebaseAuth.currentUser.za
-            }
-        }).then(res => {
-            if (res.data.received) {
-                setEvents(res.data.events);
-                setSlug(res.data.admin_slug)
-            }
-        })
+        let user = jwt(localStorage.getItem("arcana-token"))
+        setUser(user)
     }, [])
 
     const handleClose = () => {
@@ -75,13 +72,13 @@ function Events() {
             <div className={classes.parent}>
                 <div className="searchheader">
                     <div className="avatarside">
-                        <Avatar src={localStorage.getItem("photo_url")}></Avatar>
+                        <Avatar src={user.image}></Avatar>
                         <div style={{ margin: "15px" }}>
-                            <h1 className="headername2">{localStorage.getItem("name")}<br /><span className="calendlink"><a target="blank" href={window.location.origin + "/" + slug} style={{ textDecoration: "none", color: "#100615" }}>{"https://" + window.location.hostname + "/" + slug}</a></span></h1>
+                            <h1 className="headername2">{user.email}<br /><span className="calendlink">{user.userName}</span></h1>
                         </div>
                     </div>
 
-                    <button className="addbtn">Add Event</button>
+                    <button className="addbtn">View Profile</button>
                 </div>
                 <div className="divider" >
                     <Divider />

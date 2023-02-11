@@ -155,3 +155,31 @@
 .creator-card h3 p {
   color: white;
 }
+
+.signup-main-form {
+  margin-top: 50px;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.dropdown-main {
+  margin-top: 30px;
+  border-radius: 5px;
+  padding: 10px;
+  min-width: 400px;
+}
+
+.input-main {
+  padding: 10px;
+  min-width: 400px;
+}
+
+.button-main-complete {
+  margin-top: 30px;
+  border-radius: 5px;
+  padding: 15px;
+  border: none;
+  background-color: #100615;
+  color: white;
+  cursor: pointer;
+}

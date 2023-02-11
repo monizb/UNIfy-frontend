@@ -3,6 +3,7 @@ import { ColorRing } from "react-loader-spinner";
 import useArcanaAuth from "../useArcanaAuth";
 import "../styles/appbar.css";
 import Logo from "./Logo";
+import axios from "../configs/axios";
 
 function Main() {
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,25 @@ function Main() {
     await initializeAuth();
   };
 
-  const handleLogout = async () => {
+  const validateEmail = (email) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
+
+  const handleLogin = async (email) => {
+    if (!validateEmail(email)) {
+      alert("Please enter a valid email address");
+    } else {
+      await loginWithLink(email);
+    }
+  };
+
+  const handleLogout = async (email) => {
+    localStorage.removeItem("arcana-auth");
+    localStorage.removeItem("arcana-token");
     await logout();
   };
 
@@ -36,10 +55,9 @@ function Main() {
       "linear-gradient(90deg, #fdf4ea, #ffe8fa, #def3fe)";
     if (initialized) {
       if (loggedIn) {
-        localStorage.setItem("arcana-auth", "true");
-        window.location.href = "u/nav/onboarding";
+        // window.location.href = "u/nav/dashboard";
       } else {
-        setLoading(false);
+        localStorage.removeItem("arcana-auth");
       }
     }
     const loadDetails = async () => {
@@ -47,11 +65,38 @@ function Main() {
         if (loggedIn) {
           const acc = await getAccounts();
           setAccount(acc[0]);
-          setLoading(false);
-          localStorage.setItem("arcana-auth", acc[0]);
           //call login api from backend and set auth token and then navigate to dashboard
-          window.location.href = "u/nav/onboarding";
+          localStorage.setItem("arcana-auth", acc[0]);
+          await axios.post("/auth/status", {uuid: acc[0]}).then(async (res) => {
+            if (res.data.data.success && !res.data.data.username) {
+              await axios.post("/auth/login", {uuid: acc[0], email: email}).then((res) => {
+                localStorage.setItem("arcana-token", res.data.data.accessToken);
+                setLoading(false);
+                window.location.href = "u/nav/onboarding";
+              });
+            } else if (!res.data.data.success) {
+              await axios.post("/auth/register", {uuid: acc[0], email: email}).then(async (res) => {
+                await axios.post("/auth/login", {uuid: acc[0], email: email}).then((res) => {
+                  localStorage.setItem("arcana-token", res.data.data.accessToken);
+                  setLoading(false);
+                  window.location.href = "u/nav/onboarding";
+                });
+              })
+            } else {
+              await axios.post("/auth/login", {uuid: acc[0], email: email}).then((res) => {
+                localStorage.setItem("arcana-token", res.data.data.accessToken);
+                setLoading(false);
+                window.location.href = "u/nav/dashboard";
+              });
+            }
+          }).catch(async (err) => {
+            setLoading(false);
+            alert("Something went wrong. Please try again later.");
+            await handleLogout();
+          });
         } else {
+          localStorage.removeItem("arcana-auth");
+          localStorage.removeItem("arcana-token");
           setLoading(false);
         }
       }
@@ -79,14 +124,9 @@ function Main() {
               colors={["#000000"]}
             />
           </div>
-        ) : !loading && loggedIn ? (
-          <div>
-            <h2 className="sub-heading">Logged In</h2>
-            <h3>Welcome {account}</h3>
-            <h3>you're logged in successfully.</h3>
-            <button className="big-button" onClick={handleLogout}>
-              Logout
-            </button>
+        ) : loggedIn ? (
+          <div className="box">
+            <button className="logout" onClick={() => handleLogout()}> Logout </button>
           </div>
         ) : (
           <div className="box">
@@ -108,12 +148,12 @@ function Main() {
             <div className="form" style={{ display: "flex" }}>
               <input
                 value={email}
-                type="text"
+                type="email"
                 placeholder="Enter email"
                 onChange={handleEmailChange}
                 className="email-box"
               />
-              <button className="linkbtn" onClick={() => loginWithLink(email)}>
+              <button type="submit" className="linkbtn" onClick={() => handleLogin(email)}>
                 Login with link
               </button>
             </div>

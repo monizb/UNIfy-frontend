@@ -25,7 +25,7 @@ import { useWindowSize } from "react-use";
 import { useHistory } from "react-router-dom";
 import Confetti from "react-confetti";
 import "../styles/front.css";
-import { average } from 'color.js'
+import jwt from 'jwt-decode'
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -76,42 +76,23 @@ export default function Onboarding() {
   const [stage, setStage] = useState(0);
   const [state, setState] = useContext(Context);
   const [loading, setLoading] = useState(false);
-  const [screen, setScreen] = useState(1);
+  const [screen, setScreen] = useState(0);
+  const [username_l, setUsernameL] = useState("");
+  const [category, setCategory] = useState("entertainment");
+  const [terms, setTerms] = useState(false);
+  const [username, setUsername] = useState("");
+  const [available, setAvailable] = useState(false);
   const history = useHistory();
   useEffect(() => {
-    async function getStage() {
-      setLoading(true);
-      firebaseAuth.onAuthStateChanged((user) => {
-        if (user) {
-          console.log(state);
-          axios
-            .get("/auth/get-stage", {
-              headers: {
-                Authorization: `Bearer ` + firebaseAuth.currentUser.za,
-              },
-            })
-            .then((data) => {
-              if (data.data.onboarded === false) {
-                setLoading(false);
-                setStage(data.data.stage);
-                if (data.data.username !== undefined) {
-                  setUsername(data.data.username);
-                }
-              } else if (data.data.onboarded === true) {
-                history.push("/u/nav/Dashboard");
-              }
-            });
-        }
-      });
+    if(localStorage.getItem('onboarded') === 'true'){
+      window.location.href = '/u/nav/dashboard'
     }
-    // getStage();
   }, []);
   const classes = useStyles();
-  const [username, setUsername] = useState("");
-  const [available, setAvailable] = useState();
 
   const [from, setFrom] = React.useState("");
   const [to, setTo] = React.useState("");
+  const [img, setImg] = React.useState("");
 
   const [day, setDay] = React.useState({
     sunday: false,
@@ -192,6 +173,40 @@ export default function Onboarding() {
       });
   }
 
+  async function registerCreator() {
+    var token = localStorage.getItem("arcana-token");
+    if(!username_l || !category || !terms) {
+      alert("Please fill out all fields and accept terms");
+      return;
+    }
+    setLoading(true);
+    await axios
+      .post(
+        "/auth/update",
+        {
+          category: category,
+          username: username_l,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ` + token,
+          },
+        }
+      )
+      .then((res) => {
+        setLoading(false);
+        let u = jwt(res.data.data.accessToken)
+        localStorage.setItem("arcana-token", res.data.data.accessToken);
+        localStorage.setItem("arcana-user", JSON.stringify(u));
+        localStorage.setItem("onboarded", true);
+        setImg(u.image);
+        setScreen(1);
+      }).catch((err) => {
+        setLoading(false);
+        alert("Something went wrong, please try again");
+      });
+  }
+
   async function setAvailability() {
     setLoading(true);
     var token = await firebaseAuth.currentUser.getIdToken();
@@ -222,11 +237,72 @@ export default function Onboarding() {
 
   return (
     <div>
-      <Appbarmini />
+      <Appbarmini stage={screen} />
       <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      {screen === 1 ? (
+      {screen === 0 ? (
+        <div className="creator-spotlight">
+          <h2>🌝 Complete Your Registration</h2>
+          <div className="signup-main-form">
+            <input
+              className="input-main"
+              type="text"
+              placeholder="Username"
+              value={username_l}
+              onChange={(e) => setUsernameL(e.target.value)}
+              maxLength="20"
+            />
+            <div>
+              <select name="cars" id="cars" className="dropdown-main" value={category} onChange={(e) => setCategory(e.target.value)}>
+                <option value="entertainment">Entertainment</option>
+                <option value="technology">Technology</option>
+                <option value="gaming">Gaming</option>
+                <option value="music">Music</option>
+              </select>
+            </div>
+          </div>
+          <input type="checkbox" id="ageconsent" name="ageconsent" style={{marginTop: 20}} value={terms} onChange={(e) => setTerms(!terms)}></input>
+  <label for="ageconsent">I confirm that I am atleast 18 years of age at the time of sign up</label><br></br>
+          < button className="button-main-complete" onClick={() => registerCreator()}> Complete Signup </button>
+        </div>
+      ) : screen === 1 ? (
+        <div className="creator-spotlight">
+          <Confetti
+              width={width}
+              height={height}
+              numberOfPieces={100}
+              recycle={false}
+              run={stage == 3}
+            />
+          <h2>✨ You are all done!</h2>
+          <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          textAlign: "center",
+          justifyContent: "center",
+          marginTop: 15,
+        }}
+      >
+        <p className="tip-style">NFT Avatars powered by</p>
+        <img
+          style={{ height: 50, marginLeft: 10 }}
+          src="https://mma.prnewswire.com/media/1816922/QuickNode_Logo.jpg?p=facebook"
+        />
+        
+        
+      </div>
+      <div>
+        <img src={img} style={{ height: 200, marginTop: 30, borderRadius: 1000 }} />
+        </div>
+        <h2>{username_l}</h2>
+        <p>{category}</p>
+
+        < button className="button-main-complete" onClick={() => setScreen(2)}> Continue </button>
+          
+        </div>
+      ) : (
         <div className="creator-spotlight">
           <h2>✨ Creator Spotlight</h2>
           <p>
@@ -267,11 +343,14 @@ export default function Onboarding() {
             <div
               className="creator-card"
               style={{
-                backgroundImage: "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)"
+                backgroundImage:
+                  "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)",
               }}
             >
               <img
-                src={"https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"}
+                src={
+                  "https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"
+                }
                 alt="creator"
                 className="creator-image"
               />
@@ -296,11 +375,14 @@ export default function Onboarding() {
             <div
               className="creator-card"
               style={{
-                backgroundImage: "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)"
+                backgroundImage:
+                  "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)",
               }}
             >
               <img
-                src={"https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"}
+                src={
+                  "https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"
+                }
                 alt="creator"
                 className="creator-image"
               />
@@ -325,11 +407,14 @@ export default function Onboarding() {
             <div
               className="creator-card"
               style={{
-                backgroundImage: "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)"
+                backgroundImage:
+                  "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)",
               }}
             >
               <img
-                src={"https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"}
+                src={
+                  "https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"
+                }
                 alt="creator"
                 className="creator-image"
               />
@@ -338,561 +423,559 @@ export default function Onboarding() {
             </div>
           </div>
         </div>
-      ) : (
-        <div>
-          <div style={{ display: stage === 1 ? null : "none" }}>
-            <Card
-              style={{
-                width: "fit-content",
-                margin: "auto",
-                marginTop: "30px",
-                boxShadow: "none",
-                border: "1.5px solid #DADADA",
-                padding: "0px",
-              }}
-            >
-              <CardContent>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "25px",
-                  }}
-                >
-                  <div>
-                    <h1
-                      style={{
-                        fontSize: "20px",
-                        fontWeight: 550,
-                        color: "#1A1A1A",
-                      }}
-                      className="tag"
-                    >
-                      Welcome to Califix!
-                    </h1>
-                    <p style={{ width: "500px", color: "#464646" }}>
-                      Its now time for you to choose a personalized link for
-                      your calendar so that its easy for everyone to find it,
-                      this name is usually your organization or your own name
-                    </p>
-                  </div>
-                  <img
-                    src={calendar}
-                    style={{
-                      width: "auto",
-                      height: "150px",
-                      marginLeft: "70px",
-                    }}
-                  />
-                </div>
-                <hr style={{ borderTop: "1.5px solid #DADADA" }} />
-                <div
-                  style={{
-                    alignItems: "center",
-                    paddingTop: "20px",
-                    paddingLeft: "30px",
-                    paddingRight: "30px",
-                    paddingBottom: "10px",
-                  }}
-                >
-                  <h1
-                    style={{
-                      fontSize: "20px",
-                      fontWeight: 550,
-                      color: "#1A1A1A",
-                    }}
-                    className="tag"
-                  >
-                    Select your link
-                  </h1>
-                  <p style={{ color: "#464646" }}>
-                    Choose an url which is easy to remember so that you can
-                    easily share it with others
-                  </p>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <TextField
-                      error={available}
-                      id="outlined-basic"
-                      label={
-                        "https://" +
-                        window.location.hostname +
-                        "/your-unique-name"
-                      }
-                      variant="outlined"
-                      style={{
-                        width: "100%",
-                        marginTop: "20px",
-                        borderRadius: "0px",
-                      }}
-                      onChange={(e) => handleChange(e.target.value)}
-                    />
-                  </div>
-                  {available === false ? (
-                    <p style={{ color: "#00AF00" }}>
-                      &#9989; This name is available
-                    </p>
-                  ) : available === true ? (
-                    <p style={{ color: "#F44335" }}>
-                      &#10060; This name is not available
-                    </p>
-                  ) : null}
-                  <p style={{ color: "#464646" }}>
-                    {Intl.DateTimeFormat().resolvedOptions().timeZone +
-                      " " +
-                      new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1]}
-                  </p>
-                </div>
-              </CardContent>
-              {/* <CardActions>
-                    <Button size="small">Learn More</Button>
-                </CardActions> */}
-            </Card>
-            <div
-              style={{
-                width: "50%",
-                margin: "auto",
-                boxShadow: "none",
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: "20px",
-                alignItems: "center",
-              }}
-            >
-              <BorderLinearProgress variant="determinate" value={33} />
-              <button
-                style={{
-                  backgroundColor: "#100615",
-                  border: "none",
-                  borderRadius: "1000px",
-                  color: "white",
-                  fontWeight: "500",
-                  padding: "13px 20px",
-                  cursor: "pointer",
-                }}
-                class="continue"
-                disabled={available === undefined || available}
-                onClick={completeOnboarding}
-              >
-                Next: Set Availability
-              </button>
-            </div>
-          </div>
-          <div style={{ display: stage === 2 ? null : "none" }}>
-            <Card
-              style={{
-                width: "fit-content",
-                margin: "auto",
-                marginTop: "30px",
-                boxShadow: "none",
-                border: "1.5px solid #DADADA",
-                padding: "0px",
-              }}
-            >
-              <CardContent>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "25px",
-                  }}
-                >
-                  <div>
-                    <h1
-                      style={{
-                        fontSize: "20px",
-                        fontWeight: 550,
-                        color: "#1A1A1A",
-                      }}
-                      className="tag"
-                    >
-                      Set your availability
-                    </h1>
-                    <p style={{ width: "500px", color: "#464646" }}>
-                      Now, tell us the times during which your are typically
-                      available to accept a meeting/booking. Don't worry your
-                      choice is not permanent, you can change these settings
-                      anytime from your calendar settings
-                    </p>
-                  </div>
-                  <img
-                    src={time}
-                    style={{
-                      width: "auto",
-                      height: "130px",
-                      marginLeft: "70px",
-                    }}
-                  />
-                </div>
-                <hr style={{ borderTop: "1.5px solid #DADADA" }} />
-                <div>
-                  <div
-                    style={{
-                      display: "flex",
-                      margin: "auto",
-                      alignItems: "center",
-                      paddingTop: "20px",
-                      paddingLeft: "30px",
-                      paddingRight: "30px",
-                      paddingBottom: "10px",
-                    }}
-                  >
-                    <FormControl
-                      variant="outlined"
-                      className={classes.formControl}
-                      style={{ width: "45%", height: "50%" }}
-                    >
-                      <InputLabel id="demo-simple-select-outlined-label">
-                        From
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-outlined"
-                        value={from}
-                        onChange={handleFromChange}
-                        label="Age"
-                        className={classes.select}
-                      >
-                        <MenuItem value={"00:00"}>12:00 a.m</MenuItem>
-                        <MenuItem value={"01:00"}>1:00 a.m</MenuItem>
-                        <MenuItem value={"02:00"}>2:00 a.m</MenuItem>
-                        <MenuItem value={"03:00"}>3:00 a.m</MenuItem>
-                        <MenuItem value={"04:00"}>4:00 a.m</MenuItem>
-                        <MenuItem value={"05:00"}>5:00 a.m</MenuItem>
-                        <MenuItem value={"06:00"}>6:00 a.m</MenuItem>
-                        <MenuItem value={"07:00"}>7:00 a.m</MenuItem>
-                        <MenuItem value={"08:00"}>8:00 a.m</MenuItem>
-                        <MenuItem value={"09:00"}>9:00 a.m</MenuItem>
-                        <MenuItem value={"10:00"}>10:00 a.m</MenuItem>
-                        <MenuItem value={"11:00"}>11:00 a.m</MenuItem>
-                        <MenuItem value={"12:00"}>12:00 p.m</MenuItem>
-                        <MenuItem value={"13:00"}>1:00 p.m</MenuItem>
-                        <MenuItem value={"14:00"}>2:00 p.m</MenuItem>
-                        <MenuItem value={"15:00"}>3:00 p.m</MenuItem>
-                        <MenuItem value={"16:00"}>4:00 p.m</MenuItem>
-                        <MenuItem value={"17:00"}>5:00 p.m</MenuItem>
-                        <MenuItem value={"18:00"}>6:00 p.m</MenuItem>
-                        <MenuItem value={"19:00"}>7:00 p.m</MenuItem>
-                        <MenuItem value={"20:00"}>8:00 p.m</MenuItem>
-                        <MenuItem value={"21:00"}>9:00 p.m</MenuItem>
-                        <MenuItem value={"22:00"}>10:00 p.m</MenuItem>
-                        <MenuItem value={"23:00"}>11:00 p.m</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <p
-                      style={{
-                        fontSize: "25px",
-                        margin: "15px",
-                        color: "grey",
-                      }}
-                    >
-                      -
-                    </p>
-                    <FormControl
-                      variant="outlined"
-                      className={classes.formControl}
-                      style={{ width: "45%", height: "50%" }}
-                    >
-                      <InputLabel id="demo-simple-select-outlined-label">
-                        To
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-outlined"
-                        value={to}
-                        onChange={handleToChange}
-                        label="Age"
-                        className={classes.select}
-                      >
-                        <MenuItem value={"00:00"}>12:00 a.m</MenuItem>
-                        <MenuItem value={"01:00"}>1:00 a.m</MenuItem>
-                        <MenuItem value={"02:00"}>2:00 a.m</MenuItem>
-                        <MenuItem value={"03:00"}>3:00 a.m</MenuItem>
-                        <MenuItem value={"04:00"}>4:00 a.m</MenuItem>
-                        <MenuItem value={"05:00"}>5:00 a.m</MenuItem>
-                        <MenuItem value={"06:00"}>6:00 a.m</MenuItem>
-                        <MenuItem value={"07:00"}>7:00 a.m</MenuItem>
-                        <MenuItem value={"08:00"}>8:00 a.m</MenuItem>
-                        <MenuItem value={"09:00"}>9:00 a.m</MenuItem>
-                        <MenuItem value={"10:00"}>10:00 a.m</MenuItem>
-                        <MenuItem value={"11:00"}>11:00 a.m</MenuItem>
-                        <MenuItem value={"12:00"}>12:00 p.m</MenuItem>
-                        <MenuItem value={"13:00"}>1:00 p.m</MenuItem>
-                        <MenuItem value={"14:00"}>2:00 p.m</MenuItem>
-                        <MenuItem value={"15:00"}>3:00 p.m</MenuItem>
-                        <MenuItem value={"16:00"}>4:00 p.m</MenuItem>
-                        <MenuItem value={"17:00"}>5:00 p.m</MenuItem>
-                        <MenuItem value={"18:00"}>6:00 p.m</MenuItem>
-                        <MenuItem value={"19:00"}>7:00 p.m</MenuItem>
-                        <MenuItem value={"20:00"}>8:00 p.m</MenuItem>
-                        <MenuItem value={"21:00"}>9:00 p.m</MenuItem>
-                        <MenuItem value={"22:00"}>10:00 p.m</MenuItem>
-                        <MenuItem value={"23:00"}>11:00 p.m</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <div>
-                    <FormControl required error={error}>
-                      <FormGroup
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          border: "1.5px solid #DADADA",
-                          padding: "0px",
-                          justifyContent: "space-between",
-                          margin: "25px",
-                          borderRadius: "10px",
-                        }}
-                      >
-                        <FormControlLabel
-                          control={
-                            <BlueCheckbox
-                              checked={sunday}
-                              onChange={handleDayChange}
-                              name="sunday"
-                            />
-                          }
-                          label="Sunday"
-                          labelPlacement="bottom"
-                        />
-                        <Divider orientation="vertical" flexItem />
-                        <FormControlLabel
-                          control={
-                            <BlueCheckbox
-                              checked={monday}
-                              onChange={handleDayChange}
-                              name="monday"
-                            />
-                          }
-                          label="Monday"
-                          labelPlacement="bottom"
-                        />
-                        <Divider orientation="vertical" flexItem />
-                        <FormControlLabel
-                          control={
-                            <BlueCheckbox
-                              checked={tuesday}
-                              onChange={handleDayChange}
-                              name="tuesday"
-                            />
-                          }
-                          label="Tuesday"
-                          labelPlacement="bottom"
-                        />
-                        <Divider orientation="vertical" flexItem />
-                        <FormControlLabel
-                          control={
-                            <BlueCheckbox
-                              checked={wednesday}
-                              onChange={handleDayChange}
-                              name="wednesday"
-                            />
-                          }
-                          label="Wednesday"
-                          labelPlacement="bottom"
-                        />
-                        <Divider orientation="vertical" flexItem />
-                        <FormControlLabel
-                          control={
-                            <BlueCheckbox
-                              checked={thursday}
-                              onChange={handleDayChange}
-                              name="thursday"
-                            />
-                          }
-                          label="Thursday"
-                          labelPlacement="bottom"
-                        />
-                        <Divider orientation="vertical" flexItem />
-                        <FormControlLabel
-                          control={
-                            <BlueCheckbox
-                              checked={friday}
-                              onChange={handleDayChange}
-                              name="friday"
-                            />
-                          }
-                          label="Friday"
-                          labelPlacement="bottom"
-                        />
-                        <Divider orientation="vertical" flexItem />
-                        <FormControlLabel
-                          control={
-                            <BlueCheckbox
-                              checked={saturday}
-                              onChange={handleDayChange}
-                              name="saturday"
-                            />
-                          }
-                          label="Saturday"
-                          labelPlacement="bottom"
-                        />
-                      </FormGroup>
-                      <FormHelperText
-                        style={{
-                          marginLeft: "25px",
-                          display: error ? null : "none",
-                        }}
-                      >
-                        Hmm.Please select atleast one day
-                      </FormHelperText>
-                    </FormControl>
-                    <p style={{ color: "#464646", margin: "25px" }}>
-                      {Intl.DateTimeFormat().resolvedOptions().timeZone +
-                        " " +
-                        new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1]}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-              {/* <CardActions>
-                    <Button size="small">Learn More</Button>
-                </CardActions> */}
-            </Card>
-            <div
-              style={{
-                width: "50%",
-                margin: "auto",
-                boxShadow: "none",
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: "20px",
-                alignItems: "center",
-              }}
-            >
-              <BorderLinearProgress variant="determinate" value={66} />
-              <button
-                style={{
-                  backgroundColor: "#100615",
-                  border: "none",
-                  borderRadius: "1000px",
-                  color: "white",
-                  fontWeight: "500",
-                  padding: "13px 20px",
-                  cursor: "pointer",
-                }}
-                class="continue"
-                onClick={setAvailability}
-              >
-                Finish
-              </button>
-            </div>
-          </div>
-          <div style={{ display: stage === 3 ? null : "none" }}>
-            <Confetti
-              width={width}
-              height={height}
-              numberOfPieces={100}
-              recycle={false}
-              run={stage == 3}
-            />
-            <Card
-              style={{
-                width: "fit-content",
-                margin: "auto",
-                marginTop: "30px",
-                boxShadow: "none",
-                border: "1.5px solid #DADADA",
-                padding: "0px",
-              }}
-            >
-              <CardContent>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "25px",
-                  }}
-                >
-                  <div>
-                    <h1
-                      style={{
-                        fontSize: "20px",
-                        fontWeight: 550,
-                        color: "#1A1A1A",
-                      }}
-                      className="tag"
-                    >
-                      Congratulations!!
-                    </h1>
-                    <p style={{ width: "500px", color: "#464646" }}>
-                      You have successfully created your very own personalized
-                      calendar link! Now you can easily share this calendar with
-                      others and let those bookings roll in!
-                    </p>
-                  </div>
-                  <img
-                    src={calendar}
-                    style={{
-                      width: "auto",
-                      height: "150px",
-                      marginLeft: "70px",
-                    }}
-                  />
-                </div>
-                <hr style={{ borderTop: "1.5px solid #DADADA" }} />
-                <div
-                  style={{
-                    alignItems: "center",
-                    paddingTop: "20px",
-                    paddingLeft: "30px",
-                    paddingRight: "30px",
-                    paddingBottom: "10px",
-                  }}
-                >
-                  <div
-                    style={{
-                      backgroundColor: "#F2F2F2",
-                      padding: "5px 25px",
-                      borderRadius: "10px",
-                      textAlign: "center",
-                      fontWeight: "600",
-                    }}
-                  >
-                    <p style={{ color: "#100615" }}>
-                      {"https://" + window.location.hostname + "/" + username}
-                    </p>
-                  </div>
-                  <p style={{ color: "#464646" }}>
-                    {Intl.DateTimeFormat().resolvedOptions().timeZone +
-                      " " +
-                      new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1]}
-                  </p>
-                </div>
-              </CardContent>
-              {/* <CardActions>
-                    <Button size="small">Learn More</Button>
-                </CardActions> */}
-            </Card>
-            <div
-              style={{
-                width: "50%",
-                margin: "auto",
-                boxShadow: "none",
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: "20px",
-                alignItems: "center",
-              }}
-            >
-              <BorderLinearProgress variant="determinate" value={100} />
-              <button
-                style={{
-                  backgroundColor: "#100615",
-                  border: "none",
-                  borderRadius: "1000px",
-                  color: "white",
-                  fontWeight: "500",
-                  padding: "13px 20px",
-                  cursor: "pointer",
-                }}
-                class="continue"
-                onClick={() => history.push("/u/nav/Dashboard")}
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        </div>
+        // <div>
+        //   <div style={{ display: stage === 1 ? null : "none" }}>
+        //     <Card
+        //       style={{
+        //         width: "fit-content",
+        //         margin: "auto",
+        //         marginTop: "30px",
+        //         boxShadow: "none",
+        //         border: "1.5px solid #DADADA",
+        //         padding: "0px",
+        //       }}
+        //     >
+        //       <CardContent>
+        //         <div
+        //           style={{
+        //             display: "flex",
+        //             alignItems: "center",
+        //             padding: "25px",
+        //           }}
+        //         >
+        //           <div>
+        //             <h1
+        //               style={{
+        //                 fontSize: "20px",
+        //                 fontWeight: 550,
+        //                 color: "#1A1A1A",
+        //               }}
+        //               className="tag"
+        //             >
+        //               Welcome to Califix!
+        //             </h1>
+        //             <p style={{ width: "500px", color: "#464646" }}>
+        //               Its now time for you to choose a personalized link for
+        //               your calendar so that its easy for everyone to find it,
+        //               this name is usually your organization or your own name
+        //             </p>
+        //           </div>
+        //           <img
+        //             src={calendar}
+        //             style={{
+        //               width: "auto",
+        //               height: "150px",
+        //               marginLeft: "70px",
+        //             }}
+        //           />
+        //         </div>
+        //         <hr style={{ borderTop: "1.5px solid #DADADA" }} />
+        //         <div
+        //           style={{
+        //             alignItems: "center",
+        //             paddingTop: "20px",
+        //             paddingLeft: "30px",
+        //             paddingRight: "30px",
+        //             paddingBottom: "10px",
+        //           }}
+        //         >
+        //           <h1
+        //             style={{
+        //               fontSize: "20px",
+        //               fontWeight: 550,
+        //               color: "#1A1A1A",
+        //             }}
+        //             className="tag"
+        //           >
+        //             Select your link
+        //           </h1>
+        //           <p style={{ color: "#464646" }}>
+        //             Choose an url which is easy to remember so that you can
+        //             easily share it with others
+        //           </p>
+        //           <div style={{ display: "flex", alignItems: "center" }}>
+        //             <TextField
+        //               error={available}
+        //               id="outlined-basic"
+        //               label={
+        //                 "https://" +
+        //                 window.location.hostname +
+        //                 "/your-unique-name"
+        //               }
+        //               variant="outlined"
+        //               style={{
+        //                 width: "100%",
+        //                 marginTop: "20px",
+        //                 borderRadius: "0px",
+        //               }}
+        //             />
+        //           </div>
+        //           {available === false ? (
+        //             <p style={{ color: "#00AF00" }}>
+        //               &#9989; This name is available
+        //             </p>
+        //           ) : available === true ? (
+        //             <p style={{ color: "#F44335" }}>
+        //               &#10060; This name is not available
+        //             </p>
+        //           ) : null}
+        //           <p style={{ color: "#464646" }}>
+        //             {Intl.DateTimeFormat().resolvedOptions().timeZone +
+        //               " " +
+        //               new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1]}
+        //           </p>
+        //         </div>
+        //       </CardContent>
+        //       {/* <CardActions>
+        //             <Button size="small">Learn More</Button>
+        //         </CardActions> */}
+        //     </Card>
+        //     <div
+        //       style={{
+        //         width: "50%",
+        //         margin: "auto",
+        //         boxShadow: "none",
+        //         display: "flex",
+        //         justifyContent: "space-between",
+        //         marginTop: "20px",
+        //         alignItems: "center",
+        //       }}
+        //     >
+        //       <BorderLinearProgress variant="determinate" value={33} />
+        //       <button
+        //         style={{
+        //           backgroundColor: "#100615",
+        //           border: "none",
+        //           borderRadius: "1000px",
+        //           color: "white",
+        //           fontWeight: "500",
+        //           padding: "13px 20px",
+        //           cursor: "pointer",
+        //         }}
+        //         class="continue"
+        //         disabled={available === undefined || available}
+        //         onClick={completeOnboarding}
+        //       >
+        //         Next: Set Availability
+        //       </button>
+        //     </div>
+        //   </div>
+        //   <div style={{ display: stage === 2 ? null : "none" }}>
+        //     <Card
+        //       style={{
+        //         width: "fit-content",
+        //         margin: "auto",
+        //         marginTop: "30px",
+        //         boxShadow: "none",
+        //         border: "1.5px solid #DADADA",
+        //         padding: "0px",
+        //       }}
+        //     >
+        //       <CardContent>
+        //         <div
+        //           style={{
+        //             display: "flex",
+        //             alignItems: "center",
+        //             padding: "25px",
+        //           }}
+        //         >
+        //           <div>
+        //             <h1
+        //               style={{
+        //                 fontSize: "20px",
+        //                 fontWeight: 550,
+        //                 color: "#1A1A1A",
+        //               }}
+        //               className="tag"
+        //             >
+        //               Set your availability
+        //             </h1>
+        //             <p style={{ width: "500px", color: "#464646" }}>
+        //               Now, tell us the times during which your are typically
+        //               available to accept a meeting/booking. Don't worry your
+        //               choice is not permanent, you can change these settings
+        //               anytime from your calendar settings
+        //             </p>
+        //           </div>
+        //           <img
+        //             src={time}
+        //             style={{
+        //               width: "auto",
+        //               height: "130px",
+        //               marginLeft: "70px",
+        //             }}
+        //           />
+        //         </div>
+        //         <hr style={{ borderTop: "1.5px solid #DADADA" }} />
+        //         <div>
+        //           <div
+        //             style={{
+        //               display: "flex",
+        //               margin: "auto",
+        //               alignItems: "center",
+        //               paddingTop: "20px",
+        //               paddingLeft: "30px",
+        //               paddingRight: "30px",
+        //               paddingBottom: "10px",
+        //             }}
+        //           >
+        //             <FormControl
+        //               variant="outlined"
+        //               className={classes.formControl}
+        //               style={{ width: "45%", height: "50%" }}
+        //             >
+        //               <InputLabel id="demo-simple-select-outlined-label">
+        //                 From
+        //               </InputLabel>
+        //               <Select
+        //                 labelId="demo-simple-select-outlined-label"
+        //                 id="demo-simple-select-outlined"
+        //                 value={from}
+        //                 onChange={handleFromChange}
+        //                 label="Age"
+        //                 className={classes.select}
+        //               >
+        //                 <MenuItem value={"00:00"}>12:00 a.m</MenuItem>
+        //                 <MenuItem value={"01:00"}>1:00 a.m</MenuItem>
+        //                 <MenuItem value={"02:00"}>2:00 a.m</MenuItem>
+        //                 <MenuItem value={"03:00"}>3:00 a.m</MenuItem>
+        //                 <MenuItem value={"04:00"}>4:00 a.m</MenuItem>
+        //                 <MenuItem value={"05:00"}>5:00 a.m</MenuItem>
+        //                 <MenuItem value={"06:00"}>6:00 a.m</MenuItem>
+        //                 <MenuItem value={"07:00"}>7:00 a.m</MenuItem>
+        //                 <MenuItem value={"08:00"}>8:00 a.m</MenuItem>
+        //                 <MenuItem value={"09:00"}>9:00 a.m</MenuItem>
+        //                 <MenuItem value={"10:00"}>10:00 a.m</MenuItem>
+        //                 <MenuItem value={"11:00"}>11:00 a.m</MenuItem>
+        //                 <MenuItem value={"12:00"}>12:00 p.m</MenuItem>
+        //                 <MenuItem value={"13:00"}>1:00 p.m</MenuItem>
+        //                 <MenuItem value={"14:00"}>2:00 p.m</MenuItem>
+        //                 <MenuItem value={"15:00"}>3:00 p.m</MenuItem>
+        //                 <MenuItem value={"16:00"}>4:00 p.m</MenuItem>
+        //                 <MenuItem value={"17:00"}>5:00 p.m</MenuItem>
+        //                 <MenuItem value={"18:00"}>6:00 p.m</MenuItem>
+        //                 <MenuItem value={"19:00"}>7:00 p.m</MenuItem>
+        //                 <MenuItem value={"20:00"}>8:00 p.m</MenuItem>
+        //                 <MenuItem value={"21:00"}>9:00 p.m</MenuItem>
+        //                 <MenuItem value={"22:00"}>10:00 p.m</MenuItem>
+        //                 <MenuItem value={"23:00"}>11:00 p.m</MenuItem>
+        //               </Select>
+        //             </FormControl>
+        //             <p
+        //               style={{
+        //                 fontSize: "25px",
+        //                 margin: "15px",
+        //                 color: "grey",
+        //               }}
+        //             >
+        //               -
+        //             </p>
+        //             <FormControl
+        //               variant="outlined"
+        //               className={classes.formControl}
+        //               style={{ width: "45%", height: "50%" }}
+        //             >
+        //               <InputLabel id="demo-simple-select-outlined-label">
+        //                 To
+        //               </InputLabel>
+        //               <Select
+        //                 labelId="demo-simple-select-outlined-label"
+        //                 id="demo-simple-select-outlined"
+        //                 value={to}
+        //                 onChange={handleToChange}
+        //                 label="Age"
+        //                 className={classes.select}
+        //               >
+        //                 <MenuItem value={"00:00"}>12:00 a.m</MenuItem>
+        //                 <MenuItem value={"01:00"}>1:00 a.m</MenuItem>
+        //                 <MenuItem value={"02:00"}>2:00 a.m</MenuItem>
+        //                 <MenuItem value={"03:00"}>3:00 a.m</MenuItem>
+        //                 <MenuItem value={"04:00"}>4:00 a.m</MenuItem>
+        //                 <MenuItem value={"05:00"}>5:00 a.m</MenuItem>
+        //                 <MenuItem value={"06:00"}>6:00 a.m</MenuItem>
+        //                 <MenuItem value={"07:00"}>7:00 a.m</MenuItem>
+        //                 <MenuItem value={"08:00"}>8:00 a.m</MenuItem>
+        //                 <MenuItem value={"09:00"}>9:00 a.m</MenuItem>
+        //                 <MenuItem value={"10:00"}>10:00 a.m</MenuItem>
+        //                 <MenuItem value={"11:00"}>11:00 a.m</MenuItem>
+        //                 <MenuItem value={"12:00"}>12:00 p.m</MenuItem>
+        //                 <MenuItem value={"13:00"}>1:00 p.m</MenuItem>
+        //                 <MenuItem value={"14:00"}>2:00 p.m</MenuItem>
+        //                 <MenuItem value={"15:00"}>3:00 p.m</MenuItem>
+        //                 <MenuItem value={"16:00"}>4:00 p.m</MenuItem>
+        //                 <MenuItem value={"17:00"}>5:00 p.m</MenuItem>
+        //                 <MenuItem value={"18:00"}>6:00 p.m</MenuItem>
+        //                 <MenuItem value={"19:00"}>7:00 p.m</MenuItem>
+        //                 <MenuItem value={"20:00"}>8:00 p.m</MenuItem>
+        //                 <MenuItem value={"21:00"}>9:00 p.m</MenuItem>
+        //                 <MenuItem value={"22:00"}>10:00 p.m</MenuItem>
+        //                 <MenuItem value={"23:00"}>11:00 p.m</MenuItem>
+        //               </Select>
+        //             </FormControl>
+        //           </div>
+        //           <div>
+        //             <FormControl required error={error}>
+        //               <FormGroup
+        //                 style={{
+        //                   display: "flex",
+        //                   flexDirection: "row",
+        //                   border: "1.5px solid #DADADA",
+        //                   padding: "0px",
+        //                   justifyContent: "space-between",
+        //                   margin: "25px",
+        //                   borderRadius: "10px",
+        //                 }}
+        //               >
+        //                 <FormControlLabel
+        //                   control={
+        //                     <BlueCheckbox
+        //                       checked={sunday}
+        //                       onChange={handleDayChange}
+        //                       name="sunday"
+        //                     />
+        //                   }
+        //                   label="Sunday"
+        //                   labelPlacement="bottom"
+        //                 />
+        //                 <Divider orientation="vertical" flexItem />
+        //                 <FormControlLabel
+        //                   control={
+        //                     <BlueCheckbox
+        //                       checked={monday}
+        //                       onChange={handleDayChange}
+        //                       name="monday"
+        //                     />
+        //                   }
+        //                   label="Monday"
+        //                   labelPlacement="bottom"
+        //                 />
+        //                 <Divider orientation="vertical" flexItem />
+        //                 <FormControlLabel
+        //                   control={
+        //                     <BlueCheckbox
+        //                       checked={tuesday}
+        //                       onChange={handleDayChange}
+        //                       name="tuesday"
+        //                     />
+        //                   }
+        //                   label="Tuesday"
+        //                   labelPlacement="bottom"
+        //                 />
+        //                 <Divider orientation="vertical" flexItem />
+        //                 <FormControlLabel
+        //                   control={
+        //                     <BlueCheckbox
+        //                       checked={wednesday}
+        //                       onChange={handleDayChange}
+        //                       name="wednesday"
+        //                     />
+        //                   }
+        //                   label="Wednesday"
+        //                   labelPlacement="bottom"
+        //                 />
+        //                 <Divider orientation="vertical" flexItem />
+        //                 <FormControlLabel
+        //                   control={
+        //                     <BlueCheckbox
+        //                       checked={thursday}
+        //                       onChange={handleDayChange}
+        //                       name="thursday"
+        //                     />
+        //                   }
+        //                   label="Thursday"
+        //                   labelPlacement="bottom"
+        //                 />
+        //                 <Divider orientation="vertical" flexItem />
+        //                 <FormControlLabel
+        //                   control={
+        //                     <BlueCheckbox
+        //                       checked={friday}
+        //                       onChange={handleDayChange}
+        //                       name="friday"
+        //                     />
+        //                   }
+        //                   label="Friday"
+        //                   labelPlacement="bottom"
+        //                 />
+        //                 <Divider orientation="vertical" flexItem />
+        //                 <FormControlLabel
+        //                   control={
+        //                     <BlueCheckbox
+        //                       checked={saturday}
+        //                       onChange={handleDayChange}
+        //                       name="saturday"
+        //                     />
+        //                   }
+        //                   label="Saturday"
+        //                   labelPlacement="bottom"
+        //                 />
+        //               </FormGroup>
+        //               <FormHelperText
+        //                 style={{
+        //                   marginLeft: "25px",
+        //                   display: error ? null : "none",
+        //                 }}
+        //               >
+        //                 Hmm.Please select atleast one day
+        //               </FormHelperText>
+        //             </FormControl>
+        //             <p style={{ color: "#464646", margin: "25px" }}>
+        //               {Intl.DateTimeFormat().resolvedOptions().timeZone +
+        //                 " " +
+        //                 new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1]}
+        //             </p>
+        //           </div>
+        //         </div>
+        //       </CardContent>
+        //       {/* <CardActions>
+        //             <Button size="small">Learn More</Button>
+        //         </CardActions> */}
+        //     </Card>
+        //     <div
+        //       style={{
+        //         width: "50%",
+        //         margin: "auto",
+        //         boxShadow: "none",
+        //         display: "flex",
+        //         justifyContent: "space-between",
+        //         marginTop: "20px",
+        //         alignItems: "center",
+        //       }}
+        //     >
+        //       <BorderLinearProgress variant="determinate" value={66} />
+        //       <button
+        //         style={{
+        //           backgroundColor: "#100615",
+        //           border: "none",
+        //           borderRadius: "1000px",
+        //           color: "white",
+        //           fontWeight: "500",
+        //           padding: "13px 20px",
+        //           cursor: "pointer",
+        //         }}
+        //         class="continue"
+        //         onClick={setAvailability}
+        //       >
+        //         Finish
+        //       </button>
+        //     </div>
+        //   </div>
+        //   <div style={{ display: stage === 3 ? null : "none" }}>
+        //     <Confetti
+        //       width={width}
+        //       height={height}
+        //       numberOfPieces={100}
+        //       recycle={false}
+        //       run={stage == 3}
+        //     />
+        //     <Card
+        //       style={{
+        //         width: "fit-content",
+        //         margin: "auto",
+        //         marginTop: "30px",
+        //         boxShadow: "none",
+        //         border: "1.5px solid #DADADA",
+        //         padding: "0px",
+        //       }}
+        //     >
+        //       <CardContent>
+        //         <div
+        //           style={{
+        //             display: "flex",
+        //             alignItems: "center",
+        //             padding: "25px",
+        //           }}
+        //         >
+        //           <div>
+        //             <h1
+        //               style={{
+        //                 fontSize: "20px",
+        //                 fontWeight: 550,
+        //                 color: "#1A1A1A",
+        //               }}
+        //               className="tag"
+        //             >
+        //               Congratulations!!
+        //             </h1>
+        //             <p style={{ width: "500px", color: "#464646" }}>
+        //               You have successfully created your very own personalized
+        //               calendar link! Now you can easily share this calendar with
+        //               others and let those bookings roll in!
+        //             </p>
+        //           </div>
+        //           <img
+        //             src={calendar}
+        //             style={{
+        //               width: "auto",
+        //               height: "150px",
+        //               marginLeft: "70px",
+        //             }}
+        //           />
+        //         </div>
+        //         <hr style={{ borderTop: "1.5px solid #DADADA" }} />
+        //         <div
+        //           style={{
+        //             alignItems: "center",
+        //             paddingTop: "20px",
+        //             paddingLeft: "30px",
+        //             paddingRight: "30px",
+        //             paddingBottom: "10px",
+        //           }}
+        //         >
+        //           <div
+        //             style={{
+        //               backgroundColor: "#F2F2F2",
+        //               padding: "5px 25px",
+        //               borderRadius: "10px",
+        //               textAlign: "center",
+        //               fontWeight: "600",
+        //             }}
+        //           >
+        //             <p style={{ color: "#100615" }}>
+        //               {"https://" + window.location.hostname + "/" + username}
+        //             </p>
+        //           </div>
+        //           <p style={{ color: "#464646" }}>
+        //             {Intl.DateTimeFormat().resolvedOptions().timeZone +
+        //               " " +
+        //               new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1]}
+        //           </p>
+        //         </div>
+        //       </CardContent>
+        //       {/* <CardActions>
+        //             <Button size="small">Learn More</Button>
+        //         </CardActions> */}
+        //     </Card>
+        //     <div
+        //       style={{
+        //         width: "50%",
+        //         margin: "auto",
+        //         boxShadow: "none",
+        //         display: "flex",
+        //         justifyContent: "space-between",
+        //         marginTop: "20px",
+        //         alignItems: "center",
+        //       }}
+        //     >
+        //       <BorderLinearProgress variant="determinate" value={100} />
+        //       <button
+        //         style={{
+        //           backgroundColor: "#100615",
+        //           border: "none",
+        //           borderRadius: "1000px",
+        //           color: "white",
+        //           fontWeight: "500",
+        //           padding: "13px 20px",
+        //           cursor: "pointer",
+        //         }}
+        //         class="continue"
+        //         onClick={() => history.push("/u/nav/Dashboard")}
+        //       >
+        //         Continue
+        //       </button>
+        //     </div>
+        //   </div>
+        // </div>
       )}
     </div>
   );

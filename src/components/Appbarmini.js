@@ -96,7 +96,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Appbar() {
+function Appbar(props) {
   const history = useHistory();
   const [state, setState] = useContext(Context);
   const classes = useStyles();
@@ -173,7 +173,7 @@ function Appbar() {
               </div>
             ) : (
               <div>
-                <Button
+                {props.stage !== 0 && <Button
                   variant="contained"
                   style={{
                     color: "white",
@@ -188,10 +188,10 @@ function Appbar() {
                     height: "35px",
                     boxShadow: "none",
                   }}
-                  onClick={handleLogin}
+                  // onClick={handleLogin}
                 >
-                  Become A Creator
-                </Button>
+                  Create A Session
+                </Button>}
                 <Button
                   variant="contained"
                   style={{
