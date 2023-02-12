@@ -12,6 +12,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Store from "./Store"
+import Session from './components/Session';
 
 
 
@@ -41,6 +42,7 @@ function App() {
         <Route path="/:username" component={Booking} exact />
         <Route path="/:username/:event" component={Booking} exact />
         <Route path="/my/hry/test" component={Test} exact />
+        <Route path="/my/hry/testt" component={Session} exact />
         <PrivateRoute component={(Dashboard)} authenticated={authentication} path={"/u/nav/dashboard"} exact />
         <PrivateRoute component={(Onboarding)} authenticated={authentication} path={"/u/nav/onboarding"} exact />
         <PrivateRoute component={(CreateEvent)} authenticated={authentication} path={"/u/nav/dashboard/events/create"} exact />

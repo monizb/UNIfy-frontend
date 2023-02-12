@@ -146,10 +146,35 @@
   margin: 10px;
   padding: 15px;
   border-radius: 10px;
-  min-width: 300px;
+  min-width: 600px;
   max-width: 300px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   cursor: pointer;
+}
+
+.creator-card-session {
+  padding: 15px;
+  border-radius: 10px;
+  min-width: 600px;
+  max-width: 300px;
+  cursor: pointer;
+  min-height: 100px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.session-card {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 10px;
+}
+
+
+.creator-frost {
+  background-color: rgba(229,229,229, 0.85);
+  border-radius: 1000px;
+}
+.session-desc {
+  font-size: 20px;
+  color: #100615;
 }
 
 .creator-card h3 p {

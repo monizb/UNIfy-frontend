@@ -168,22 +168,31 @@ function Dashboard() {
       </div>
       <TabPanel value={value} index={0} style={{ padding: "0px" }}>
         <Events />
-        <div className="creator-spotlight" style={{marginTop: 10}}>
+        <div className="creator-spotlight" style={{ marginTop: 10 }}>
           <div className="creators-list">
-            <div
-              className="creator-card"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)",
-              }}
-            >
-              <img
-                src={"https://unifychain.co/assets/images/artwork/25.jpg"}
-                alt="creator"
-                className="creator-image"
-              />
-              <h3>Creator 1</h3>
-              <p>Creator 1's description</p>
+            <div className="session-card">
+              <div
+                className="creator-card-session"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)",
+                }}
+              >
+                <p className="session-desc">"Learn how to decentralize any platform and make money off it"</p>
+                <div style={{ display: "flex", alignItems: "center", padding: 10, backgroundColor: "white" }} className="creator-frost">
+                <img
+                  src={"https://unifychain.co/assets/images/artwork/25.jpg"}
+                  alt="creator"
+                  className="creator-image"
+                  style={{height: 70 , width: 70}}
+                />
+                <div style={{display: "flex", justifyContent: "space-between", flex: 1, alignItems: "center"}}>
+                <h3 style={{marginLeft: 15}}>Creator 1</h3>
+                <p>test</p>
+                </div>
+              </div>
+              </div>
+              
             </div>
             <div
               className="creator-card"
