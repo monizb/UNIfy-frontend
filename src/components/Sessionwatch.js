@@ -120,7 +120,7 @@ export default function Sessionwatch() {
     }
   };
 
-  const checkIfWalletIsConnected = async () => {
+  const checkIfWalletIsConnected = async (event) => {
     console.log("runs");
     const { ethereum } = window;
 
@@ -140,17 +140,17 @@ export default function Sessionwatch() {
       account = accounts[0];
       console.log("Found an authorized account:", account);
       setCurrentAccount(account);
-      console.log(event)
-      setFlowRateDisplay(4);
-      console.log(event.fee);
-      createNewFlow("0xe478C4CA051f64074Ae8dDbFEAB8B9a013f9A0CB", parseInt(4));
+      const tokenPerSecond = await calculateWeiPerSecond(event.fee, event.duration)
+      setFlowRateDisplay(tokenPerSecond);
+      console.log("token :", tokenPerSecond);
+      await createNewFlow(event.wallet, tokenPerSecond);
     } else {
       connectWallet();
       console.log("No authorized account found");
     }
   };
 
-  function calculateWeiPerSecond(eth, timeInMinutes) {
+  async function calculateWeiPerSecond(eth, timeInMinutes) {
     // Convert eth to DAIx
     const daiX = eth * 10 ** 18;
     const weiPerDai = 0.000000000002592;
@@ -161,7 +161,7 @@ export default function Sessionwatch() {
   }
 
   async function createNewFlow(recipient, flowRate) {
-    console.log(flowRate)
+    console.log("hura: ",parseInt(flowRate))
     provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
 
@@ -185,7 +185,6 @@ export default function Sessionwatch() {
         sender: await superSigner.getAddress(),
         receiver: recipient,
         flowRate: flowRate,
-        // userData?: string
       });
 
       console.log(createFlowOperation);
