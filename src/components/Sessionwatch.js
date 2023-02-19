@@ -63,9 +63,9 @@ export default function Sessionwatch() {
     setUser(user);
   }, []);
 
-  useEffect(async () => {
+  useEffect(() => {
     var token = localStorage.getItem("arcana-token");
-    await axios
+    axios
       .get("/session/" + sessionid, {
         headers: {
           Authorization: `Bearer ` + token,
