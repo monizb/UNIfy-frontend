@@ -142,7 +142,7 @@ export default function Sessionwatch() {
       setCurrentAccount(account);
       console.log(event)
       setFlowRateDisplay(calculateWeiPerSecond(event.fee, event.duration));
-      createNewFlow(recipient, parseInt(flowRateDisplay));
+      createNewFlow(event?.wallet, parseInt(flowRateDisplay));
     } else {
       console.log("No authorized account found");
     }
@@ -157,10 +157,6 @@ export default function Sessionwatch() {
     const weiPerSecond = parseInt(daiPerSecond / weiPerDai);
     return weiPerSecond;
   }
-
-  useEffect(() => {
-    checkIfWalletIsConnected();
-  }, []);
 
   async function createNewFlow(recipient, flowRate) {
     console.log(flowRate)

@@ -249,7 +249,7 @@ function Dashboard() {
                     >
                       <img
                         src={
-                          session.user.image
+                          session?.user?.image
                         }
                         alt="creator"
                         className="creator-image"
@@ -263,7 +263,7 @@ function Dashboard() {
                           alignItems: "center",
                         }}
                       >
-                        <h3 style={{ marginLeft: 15 }}>{session.user.userName}</h3>
+                        <h3 style={{ marginLeft: 15 }}>{session?.user?.userName}</h3>
                         <div
                           style={{
                             display: "flex",
@@ -271,8 +271,8 @@ function Dashboard() {
                             justifyContent: "space-between",
                           }}
                         >
-                          <h3 style={{ marginRight: 15 }}>{session.fee} ETH/DAIx</h3>
-                          {session.user._id != user.id ? (
+                          <h3 style={{ marginRight: 15 }}>{session?.fee} ETH/DAIx</h3>
+                          {session?.user?._id != user.id ? (
                             <Button
                             variant="contained"
                             style={{
@@ -282,7 +282,7 @@ function Dashboard() {
                               width: 100,
                               height: 40,
                             }}
-                            onClick={() => {window.location.replace("/sessions/watch/" + session._id)}}
+                            onClick={() => {window.location.replace("/sessions/watch/" + session?._id)}}
                           >
                             Join
                           </Button>
@@ -296,7 +296,7 @@ function Dashboard() {
                               width: 100,
                               height: 40,
                             }}
-                            onClick={() => {window.location.replace("/sessions/" + session._id)}}
+                            onClick={() => {window.location.replace("/sessions/" + session?._id)}}
                           >
                             Start
                           </Button>
@@ -368,7 +368,7 @@ function Dashboard() {
                           }}
                         >
                           <h3 style={{ marginRight: 15 }}>{session.fee} ETH/DAIx</h3>
-                          {session.user._id != user.id ? (
+                          {session?.user?._id != user?.id ? (
                             <Button
                             variant="contained"
                             style={{
@@ -378,7 +378,7 @@ function Dashboard() {
                               width: 100,
                               height: 40,
                             }}
-                            onClick={() => {window.location.replace("/sessions/watch/" + session._id)}}
+                            onClick={() => {window.location.replace("/sessions/watch/" + session?._id)}}
                           >
                             Join
                           </Button>
