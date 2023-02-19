@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Appbarmini from "./Appbarmini";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -14,9 +14,13 @@ import "../styles/dashboard.css";
 import DateRangeIcon from "@material-ui/icons/DateRange";
 import { useHistory } from "react-router-dom";
 import ConfirmationNumberIcon from "@material-ui/icons/ConfirmationNumber";
+import axios from "../configs/axios";
+import jwt from 'jwt-decode'
+import { Button } from "@material-ui/core";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
+
   return (
     <div
       role="tabpanel"
@@ -62,6 +66,33 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Dashboard() {
+  const [sessions, setSessions] = React.useState([]);
+  const [user, setUser] = React.useState({
+    email: "",
+    image: "",
+    userName: "",
+    _id: ""
+});
+  useEffect(() => {
+    var token = localStorage.getItem("arcana-token");
+    axios
+      .post(
+        "/session/sessions",
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ` + token,
+          },
+        }
+      ).then((res) => {
+      setSessions(res.data.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    let user = jwt(localStorage.getItem("arcana-token"))
+    setUser(user)
+}, [])
   const history = useHistory();
   const [value, setValue] = React.useState(0);
   const classes = useStyles();
@@ -170,8 +201,95 @@ function Dashboard() {
         <Events />
         <div className="creator-spotlight" style={{ marginTop: 10 }}>
           <div className="creators-list">
+            {sessions.map((session) => {
+              return (
+                <div className="session-card" style={{margin: 15}}>
+                  <div
+                    className="creator-card-session"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)",
+                    }}
+                  >
+                    <p className="session-desc">
+                      "{session.sessionName}"
+                    </p>
+                    <p className="session-desc">
+                      {session.sessionDesc}
+                    </p>
+                    <p className="session-desc">
+                      Scheduled for {new Date(session.date).toDateString()} at {session.startTime}
+                    </p>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: 10,
+                        backgroundColor: "white",
+                      }}
+                      className="creator-frost"
+                    >
+                      <img
+                        src={
+                          session.user.image
+                        }
+                        alt="creator"
+                        className="creator-image"
+                        style={{ height: 70, width: 70 }}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          flex: 1,
+                          alignItems: "center",
+                        }}
+                      >
+                        <h3 style={{ marginLeft: 15 }}>{session.user.userName}</h3>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <h3 style={{ marginRight: 15 }}>{session.fee} ETH/DAIx</h3>
+                          {session.user._id === user._id ? (
+                            <Button
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#100615",
+                              color: "white",
+                              borderRadius: 10,
+                              width: 100,
+                              height: 40,
+                            }}
+                          >
+                            Join
+                          </Button>
+                          ): (
+                            <Button
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#100615",
+                              color: "white",
+                              borderRadius: 10,
+                              width: 100,
+                              height: 40,
+                            }}
+                          >
+                            Start
+                          </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
             <div className="session-card">
-              <div
+              {/* <div
                 className="creator-card-session"
                 style={{
                   backgroundImage:
@@ -191,10 +309,10 @@ function Dashboard() {
                 <p>test</p>
                 </div>
               </div>
-              </div>
+              </div> */}
               
             </div>
-            <div
+            {/* <div
               className="creator-card"
               style={{
                 backgroundImage:
@@ -208,8 +326,8 @@ function Dashboard() {
               />
               <h3>Creator 2</h3>
               <p>Creator 2's description</p>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className="creator-card"
               style={{
                 backgroundImage:
@@ -225,8 +343,8 @@ function Dashboard() {
               />
               <h3>Creator 3</h3>
               <p>Creator 3's description</p>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className="creator-card"
               style={{
                 backgroundImage:
@@ -240,8 +358,8 @@ function Dashboard() {
               />
               <h3>Creator 2</h3>
               <p>Creator 2's description</p>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className="creator-card"
               style={{
                 backgroundImage:
@@ -257,8 +375,8 @@ function Dashboard() {
               />
               <h3>Creator 3</h3>
               <p>Creator 3's description</p>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className="creator-card"
               style={{
                 backgroundImage:
@@ -272,8 +390,8 @@ function Dashboard() {
               />
               <h3>Creator 2</h3>
               <p>Creator 2's description</p>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className="creator-card"
               style={{
                 backgroundImage:
@@ -289,7 +407,7 @@ function Dashboard() {
               />
               <h3>Creator 3</h3>
               <p>Creator 3's description</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </TabPanel>

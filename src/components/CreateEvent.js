@@ -41,6 +41,8 @@ import DateRangePicker from "@wojtekmaj/react-daterange-picker";
 import "../styles/daterangepicker.css";
 import "../styles/editor.css";
 import TimezoneSelect from "react-timezone-select";
+import { Backdrop, CircularProgress } from "@material-ui/core";
+// import axios from "../configs/axios";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -79,8 +81,13 @@ function CreateEvent() {
   const [link, setLink] = useState();
   const [stage, setStage] = useState(1);
   const [event, setEvent] = useState({
-    name: "",
-    location: "",
+    sessionName: "",
+    sessionDesc: "",
+    duration: 0,
+    fee: 0,
+    date: "",
+    startTime: "",
+    wallet: ""
   });
   const [open, setOpen] = React.useState(false);
 
@@ -114,22 +121,23 @@ function CreateEvent() {
 
   const classes = useStyles();
 
-  useEffect(() => {
-    axios
-      .get("/auth/user-events", {
-        headers: {
-          Authorization: `Bearer ` + firebaseAuth.currentUser.za,
-        },
-      })
-      .then((res) => {
-        if (res.data.received) {
-          setSlug(res.data.admin_slug);
-        }
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("/auth/user-events", {
+  //       headers: {
+  //         Authorization: `Bearer ` + firebaseAuth.currentUser.za,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       if (res.data.received) {
+  //         setSlug(res.data.admin_slug);
+  //       }
+  //     });
+  // }, []);
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [ceditorState, setCEditorState] = useState(EditorState.createEmpty());
+  const [loading, setLoading] = useState(false);
   const onEditorStateChange = (editorState) => {
     return setEditorState(editorState);
   };
@@ -175,23 +183,34 @@ function CreateEvent() {
     }
   }
 
-  async function handleChange(e) {
-    var token = await firebaseAuth.currentUser.getIdToken();
-    axios
-      .get("/auth/check-event-name-validity?slug=" + e, {
-        headers: {
-          Authorization: `Bearer ` + token,
-        },
-      })
-      .then((res) => {
-        if (!res.data.available) {
-          setLink(e);
-          setAvailable(true);
-        } else {
-          setLink(e);
-          setAvailable(false);
+  async function createSession () {
+    if (event.sessionName === "" || event.sessionDesc === "" || event.duration === "" || event.fee === "" || event.wallet === "") {
+      handleClick({ vertical: "bottom", horizontal: "center", open: true });
+    } else {
+      setLoading(true);
+      var token = localStorage.getItem("arcana-token");
+      event.date = new Date(event.date)
+      event.fee = parseFloat(event.fee)
+      event.duration = parseInt(event.duration)
+    await axios
+      .post(
+        "/session/create",
+        event,
+        {
+          headers: {
+            Authorization: `Bearer ` + token,
+          },
         }
+      )
+      .then((res) => {
+        setLoading(false);
+        alert("Session created successfully");
+        window.location.replace("/u/nav/dashboard");
+      }).catch((err) => {
+        setLoading(false);
+        alert("Something went wrong, please try again");
       });
+    }
   }
 
   function handleFormchange(name, e) {
@@ -277,6 +296,9 @@ function CreateEvent() {
 
   return (
     <div>
+      <Backdrop className={classes.backdrop} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Appbarmini />
       <Snackbar
         open={open}
@@ -304,7 +326,7 @@ function CreateEvent() {
           {" "}
           <ArrowBackIcon style={{ color: "#100615", fontSize: "25px" }} />
         </Button>
-        <h1 className="headercard">Add New Event</h1>
+        <h1 className="headercard">Add New Session</h1>
         {/* <FormControlLabel
                     control={<IOSSwitch checked={on} onChange={handleStatus} name="switchon" />}
                     label={on ? "Event: ON" : "Event: OFF"}
@@ -351,17 +373,14 @@ function CreateEvent() {
                     style={{ marginRight: "25px" }}
                   ></Badge>
 
-                  <p className="headercard">Step 1: Event Details</p>
+                  <p className="headercard">Session Details</p>
                 </div>
-                <button className="sharebtn" onClick={nextStage}>
-                  Next
-                </button>
               </div>
               <Divider />
               <div style={{ padding: "20px 40px" }}>
                 <div>
                   <p className="headername2" style={{ fontSize: "15px" }}>
-                    Event Name *
+                    Session Name *
                   </p>
                   <input
                     type="text"
@@ -373,266 +392,121 @@ function CreateEvent() {
                     }}
                     className="headercard"
                     onChange={(e) => {
-                      handleFormchange("name", e);
+                      handleFormchange("sessionName", e);
                     }}
                   ></input>
                 </div>
-                <div style={{ marginTop: "30px" }}>
+                <div>
                   <p className="headername2" style={{ fontSize: "15px" }}>
-                    Event Location *
+                    Sesison Description *
                   </p>
-                  <FormControl
-                    variant="outlined"
-                    className={classes.formControl}
-                    style={{ width: "55%", height: "50%" }}
-                  >
-                    {/* <InputLabel id="demo-simple-select-outlined-label">Location</InputLabel> */}
-                    <Select
-                      id="demo-simple-select-outlined"
-                      value={location}
-                      // onChange={handleFromChange}
-                      className={classes.select}
-                      MenuProps={{
-                        anchorOrigin: {
-                          vertical: "bottom",
-                          horizontal: "left",
-                        },
-                        transformOrigin: {
-                          vertical: "top",
-                          horizontal: "left",
-                        },
-                        menuStyle: {
-                          border: "1px solid black",
-                          borderRadius: "5%",
-                          backgroundColor: "lightgrey",
-                        },
-                        getContentAnchorEl: null,
-                      }}
-                      onChange={(e) => handlelocationchange("location", e)}
-                    >
-                      <MenuItem value={"person"}>
-                        <img
-                          src={person}
-                          style={{ width: "auto", height: "27px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 10px" }}
-                          className="meetingname"
-                        >
-                          In-Person Meeting
-                          <p className="timezone">Set Location</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"call"}>
-                        <img
-                          src={call}
-                          style={{ width: "auto", height: "27px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 10px" }}
-                          className="meetingname"
-                        >
-                          On Call<p className="timezone">Call or ask to call</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"zoom"}>
-                        <img
-                          src={zoom}
-                          style={{ width: "auto", height: "27px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 10px" }}
-                          className="meetingname"
-                        >
-                          Zoom Meetings
-                          <p className="timezone">Web Conference</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"skype"} className="headername2">
-                        <img
-                          src={skype}
-                          style={{ width: "auto", height: "25px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 15px" }}
-                          className="meetingname"
-                        >
-                          Skype Call<p className="timezone">Web Conference</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"teams"}>
-                        <img
-                          src={teams}
-                          style={{ width: "auto", height: "25px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 15px" }}
-                          className="meetingname"
-                        >
-                          Microsoft Teams
-                          <p className="timezone">Web Conference</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"cisco"}>
-                        <img
-                          src={cisco}
-                          style={{ width: "auto", height: "25px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 15px" }}
-                          className="meetingname"
-                        >
-                          Cisco Webex<p className="timezone">Web Conference</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"goto"}>
-                        <img
-                          src={goto}
-                          style={{ width: "auto", height: "25px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 15px" }}
-                          className="meetingname"
-                        >
-                          GoTo Meeting<p className="timezone">Web Conference</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"hangout"}>
-                        <img
-                          src={hangout}
-                          style={{ width: "auto", height: "25px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 15px" }}
-                          className="meetingname"
-                        >
-                          Google Hangout
-                          <p className="timezone">Web Conference</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"meet"}>
-                        <img
-                          src={meet}
-                          style={{ width: "auto", height: "19px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 15px" }}
-                          className="meetingname"
-                        >
-                          Google Meet<p className="timezone">Web Conference</p>
-                        </div>
-                      </MenuItem>
-                      <MenuItem value={"custom"}>
-                        <img
-                          src={pencil}
-                          style={{ width: "auto", height: "23px" }}
-                        />
-                        <div
-                          style={{ padding: "0px 15px" }}
-                          className="meetingname"
-                        >
-                          Custom Details
-                          <p className="timezone">Enter your own details</p>
-                        </div>
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
+                  <input
+                    type="text"
+                    style={{
+                      padding: "14px",
+                      width: "51.5%",
+                      borderRadius: "10px",
+                      border: "1px solid #D1D0D1",
+                    }}
+                    className="headercard"
+                    onChange={(e) => {
+                      handleFormchange("sessionDesc", e);
+                    }}
+                  ></input>
                 </div>
-                {custom ? (
-                  <div style={{ marginTop: "30px" }}>
-                    <p className="headername2" style={{ fontSize: "15px" }}>
-                      Custom Event Details*
-                    </p>
-                    <div style={{ width: "55%" }}>
-                      <Editor
-                        onEditorStateChange={onCEditorStateChange}
-                        toolbarClassName="toolbarClassName"
-                        wrapperClassName="wrapperClassName"
-                        editorClassName="editorClassName"
-                        editorState={ceditorState}
-                        toolbar={{
-                          options: ["inline", "list", "history"],
-                          inline: {
-                            options: ["bold", "italic", "underline"],
-                          },
-                          list: {
-                            options: ["unordered", "ordered"],
-                          },
-                        }}
-                        placeholder="Enter custom meeting details here"
-                        onChange={() =>
-                          setCDescription(
-                            convertToRaw(ceditorState.getCurrentContent())
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-                ) : null}
-                <div style={{ marginTop: "30px" }}>
+                <div>
                   <p className="headername2" style={{ fontSize: "15px" }}>
-                    Event Agenda / Summary
+                    Sesison Date *
                   </p>
-                  <div style={{ width: "55%" }}>
-                    <Editor
-                      onEditorStateChange={onEditorStateChange}
-                      toolbarClassName="toolbarClassName"
-                      wrapperClassName="wrapperClassName"
-                      editorClassName="editorClassName"
-                      editorState={editorState}
-                      toolbar={{
-                        options: ["inline", "list", "history"],
-                        inline: {
-                          options: ["bold", "italic", "underline"],
-                        },
-                        list: {
-                          options: ["unordered", "ordered"],
-                        },
-                      }}
-                      placeholder="Enter your meeting details here like summary, agenda and other information"
-                      onChange={() =>
-                        setDescription(
-                          convertToRaw(editorState.getCurrentContent())
-                        )
-                      }
-                    />
-                  </div>
-                  <div>
-                    <p className="headername2" style={{ fontSize: "15px" }}>
-                      Event Link *
-                    </p>
-                    <input
-                      type="text"
-                      style={{
-                        padding: "14px",
-                        width: "51.5%",
-                        borderRadius: "10px",
-                        border: "1px solid #D1D0D1",
-                      }}
-                      className="headercard"
-                      placeholder={window.location.origin + "/" + slug + "/"}
-                      onChange={(e) => handleChange(e.target.value)}
-                    ></input>
-                    {available === false ? (
-                      <p style={{ color: "#00AF00" }}>
-                        &#9989; This link is available
-                      </p>
-                    ) : available === true ? (
-                      <p style={{ color: "#F44335" }}>
-                        &#10060; This link is not available
-                      </p>
-                    ) : null}
-                  </div>
-                  <div style={{ marginTop: "30px", marginBottom: "20px" }}>
-                    <p className="headername2" style={{ fontSize: "15px" }}>
-                      Event Color *
-                    </p>
-                    <CirclePicker
-                      circleSize={40}
-                      width="50%"
-                      onChange={handlecolorchange}
-                    />
-                  </div>
+                  <input
+                    type="date"
+                    style={{
+                      padding: "14px",
+                      width: "51.5%",
+                      borderRadius: "10px",
+                      border: "1px solid #D1D0D1",
+                    }}
+                    className="headercard"
+                    onChange={(e) => {
+                      handleFormchange("date", e);
+                    }}
+                  ></input>
+                </div>
+                <div>
+                  <p className="headername2" style={{ fontSize: "15px" }}>
+                    Sesison Start Time *
+                  </p>
+                  <input
+                    type="time"
+                    style={{
+                      padding: "14px",
+                      width: "51.5%",
+                      borderRadius: "10px",
+                      border: "1px solid #D1D0D1",
+                    }}
+                    className="headercard"
+                    onChange={(e) => {
+                      handleFormchange("startTime", e);
+                    }}
+                  ></input>
+                </div>
+                <div>
+                  <p className="headername2" style={{ fontSize: "15px" }}>
+                    Session Duration (In Minutes) *
+                  </p>
+                  <input
+                    type="number"
+                    max={270}
+                    style={{
+                      padding: "14px",
+                      width: "51.5%",
+                      borderRadius: "10px",
+                      border: "1px solid #D1D0D1",
+                    }}
+                    className="headercard"
+                    onChange={(e) => {
+                      handleFormchange("duration", e);
+                    }}
+                  ></input>
+                </div>
+                <div>
+                  <p className="headername2" style={{ fontSize: "15px" }}>
+                    Session Fees/ Attendee (In ETH) *
+                  </p>
+                  <input
+                    type="number"
+                    max={270}
+                    style={{
+                      padding: "14px",
+                      width: "51.5%",
+                      borderRadius: "10px",
+                      border: "1px solid #D1D0D1",
+                    }}
+                    className="headercard"
+                    onChange={(e) => {
+                      handleFormchange("fee", e);
+                    }}
+                    step="any"
+                  ></input>
+                </div>
+                <div>
+                  <p className="headername2" style={{ fontSize: "15px" }}>
+                    Wallet you want to receive the payments in *
+                  </p>
+                  <input
+                    type="text"
+                    max={270}
+                    style={{
+                      padding: "14px",
+                      width: "51.5%",
+                      borderRadius: "10px",
+                      border: "1px solid #D1D0D1",
+                    }}
+                    className="headercard"
+                    onChange={(e) => {
+                      handleFormchange("wallet", e);
+                    }}
+                  ></input>
                 </div>
               </div>
               <Divider />
@@ -651,10 +525,9 @@ function CreateEvent() {
                     alignItems: "center",
                   }}
                 >
-                  <p className="headercard">Next: Calendar Settings</p>
                 </div>
-                <button className="sharebtn" onClick={nextStage}>
-                  Next
+                <button className="sharebtn" onClick={createSession}>
+                  Submit & Create
                 </button>
               </div>
             </div>

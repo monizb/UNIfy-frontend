@@ -41,11 +41,12 @@ function App() {
         <Route path={"/"} component={(Main)} exact />
         <Route path="/:username" component={Booking} exact />
         <Route path="/:username/:event" component={Booking} exact />
-        <Route path="/my/hry/test" component={Test} exact />
-        <Route path="/my/hry/testt" component={Session} exact />
+        {/* <Route path="/my/hry/test" component={Test} exact />
+        <Route path="/my/hry/testt" component={Session} exact /> */}
         <PrivateRoute component={(Dashboard)} authenticated={authentication} path={"/u/nav/dashboard"} exact />
         <PrivateRoute component={(Onboarding)} authenticated={authentication} path={"/u/nav/onboarding"} exact />
         <PrivateRoute component={(CreateEvent)} authenticated={authentication} path={"/u/nav/dashboard/events/create"} exact />
+        <PrivateRoute component={(Session)} authenticated={authentication} path={"/sessions/:sessionid"} exact />
         <Route path="*" component={NotFoundPage} exact />
       </Switch>
     </Store>

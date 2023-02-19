@@ -186,7 +186,7 @@ export default function Onboarding() {
         "/auth/update",
         {
           category: category,
-          username: username_l,
+          userName: username_l,
         },
         {
           headers: {

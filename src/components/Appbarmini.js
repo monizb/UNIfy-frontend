@@ -188,7 +188,7 @@ function Appbar(props) {
                     height: "35px",
                     boxShadow: "none",
                   }}
-                  // onClick={handleLogin}
+                  onClick={()=> {window.location.replace("/u/nav/dashboard/events/create")}}
                 >
                   Create A Session
                 </Button>}
