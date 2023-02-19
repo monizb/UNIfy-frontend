@@ -406,6 +406,19 @@ export default function Sessionwatch() {
                     onClick={() => {
                       deleteExistingFlow(recipient);
                     }}
+                    style={{
+                      color: "white",
+                      borderColor: "white",
+                      backgroundColor: "#100615",
+                      marginRight: 10,
+                      fontWeight: 700,
+                      paddingLeft: "24px",
+                      paddingRight: "24px",
+                      borderRadius: 1000,
+                      textTransform: "none",
+                      height: "35px",
+                      boxShadow: "none",
+                    }}
                   >
                     Stop
                   </button>
