@@ -63,9 +63,9 @@ export default function Sessionwatch() {
     setUser(user);
   }, []);
 
-  useEffect(() => {
+  useEffect(async () => {
     var token = localStorage.getItem("arcana-token");
-    axios
+    await axios
       .get("/session/" + sessionid, {
         headers: {
           Authorization: `Bearer ` + token,
@@ -141,8 +141,9 @@ export default function Sessionwatch() {
       console.log("Found an authorized account:", account);
       setCurrentAccount(account);
       console.log(event)
-      setFlowRateDisplay(calculateWeiPerSecond(event.fee, event.duration));
-      createNewFlow(event?.wallet, parseInt(flowRateDisplay));
+      setFlowRateDisplay(4);
+      console.log(event.fee);
+      createNewFlow("0xe478C4CA051f64074Ae8dDbFEAB8B9a013f9A0CB", parseInt(4));
     } else {
       console.log("No authorized account found");
     }
