@@ -43,6 +43,7 @@ function Main() {
   const handleLogout = async (email) => {
     localStorage.removeItem("arcana-auth");
     localStorage.removeItem("arcana-token");
+    localStorage.removeItem("onboarded");
     await logout();
   };
 
@@ -86,6 +87,7 @@ function Main() {
               await axios.post("/auth/login", {uuid: acc[0], email: email}).then((res) => {
                 localStorage.setItem("arcana-token", res.data.data.accessToken);
                 setLoading(false);
+                localStorage.setItem("onboarded", true);
                 window.location.href = "u/nav/dashboard";
               });
             }

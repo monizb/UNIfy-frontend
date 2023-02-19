@@ -25,6 +25,7 @@ import { useWindowSize } from "react-use";
 import { useHistory } from "react-router-dom";
 import Confetti from "react-confetti";
 import "../styles/front.css";
+import { Button } from "@material-ui/core";
 import jwt from 'jwt-decode'
 
 const useStyles = makeStyles((theme) => ({
@@ -309,6 +310,25 @@ export default function Onboarding() {
             Welcome to UNIfy, discover great content creators below or become
             one yourself!
           </p>
+          <Button
+                  variant="contained"
+                  style={{
+                    color: "white",
+                    borderColor: "white",
+                    backgroundColor: "#100615",
+                    marginRight: 10,
+                    fontWeight: 700,
+                    paddingLeft: "24px",
+                    paddingRight: "24px",
+                    borderRadius: 1000,
+                    textTransform: "none",
+                    height: "35px",
+                    boxShadow: "none",
+                  }}
+                  onClick={() => {window.location.replace("/u/nav/dashboard")}}
+                >
+                  Continue To Dashboard
+                </Button>
           <div className="creators-list">
             <div
               className="creator-card"
