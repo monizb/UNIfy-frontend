@@ -60,7 +60,6 @@ export default function Sessionwatch() {
 
   useEffect(() => {
     let user = jwt(localStorage.getItem("arcana-token"));
-    console.log(user);
     setUser(user);
   }, []);
 
@@ -75,7 +74,8 @@ export default function Sessionwatch() {
       .then((res) => {
         setLoading(false);
         setEvent(res.data.data);
-        console.log(res.data.data);
+        checkIfWalletIsConnected(res.data.data);
+        setRecipient(res.data.data.wallet);
       })
       .catch((err) => {
         setLoading(false);
@@ -96,9 +96,8 @@ export default function Sessionwatch() {
       },
     ],
   };
-
-  const recipient = "0xe478C4CA051f64074Ae8dDbFEAB8B9a013f9A0CB";
-  const [flowRateDisplay, setFlowRateDisplay] = useState("");
+  const [recipient, setRecipient] = useState("")
+  const [flowRateDisplay, setFlowRateDisplay] = useState(0);
   const [currentAccount, setCurrentAccount] = useState("");
   const [isMoneyStreaming, setTransactionStream] = useState(false);
 
@@ -141,25 +140,21 @@ export default function Sessionwatch() {
       account = accounts[0];
       console.log("Found an authorized account:", account);
       setCurrentAccount(account);
-      setFlowRateDisplay(calculateWeiPerSecond(1, 30));
+      console.log(event)
+      setFlowRateDisplay(calculateWeiPerSecond(event.fee, event.duration));
+      createNewFlow(recipient, parseInt(flowRateDisplay));
     } else {
       console.log("No authorized account found");
     }
   };
 
-  function calculateWeiPerSecond(dollars, timeInMinutes) {
-    // Convert dollars to DAIx
-    const daiX = dollars * 10 ** 18;
-
-    // Convert time to seconds
-    const timeInSeconds = timeInMinutes * 60;
-
-    // Calculate the amount of DAIx per second
-    const daiXPerSecond = daiX / timeInSeconds;
-
-    // Calculate the wei per second, assuming 1 DAIx = 1e18 wei
-    const weiPerSecond = Math.floor(daiXPerSecond * 10 ** 18);
-
+  function calculateWeiPerSecond(eth, timeInMinutes) {
+    // Convert eth to DAIx
+    const daiX = eth * 10 ** 18;
+    const weiPerDai = 0.000000000002592;
+    const daiPerMinute = (daiX / timeInMinutes);
+    const daiPerSecond = (daiPerMinute / 60);
+    const weiPerSecond = parseInt(daiPerSecond / weiPerDai);
     return weiPerSecond;
   }
 
@@ -168,6 +163,7 @@ export default function Sessionwatch() {
   }, []);
 
   async function createNewFlow(recipient, flowRate) {
+    console.log(flowRate)
     provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
 
@@ -364,45 +360,42 @@ export default function Sessionwatch() {
           height="auto"
         />
         <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          textAlign: "center",
-          justifyContent: "center",
-          marginTop: 15,
-          marginLeft: 50
-        }}
-      >
-        <p className="tip-style">Live Token Streaming powered by</p>
-        <img
-          style={{ height: 20, marginLeft: 10 }}
-          src="https://d33wubrfki0l68.cloudfront.net/492706482c9f1aebee7259b32cca255e31dee861/28f04/assets/img/logo.svg"
-        />
-      </div>
-        <p>
-          <b>Connected Wallet:</b> {currentAccount}
-        </p>
-        <p>
-          <b>Flow Rate: </b>Wei/second: {flowRateDisplay}
-        </p>
-        <div
           style={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
+            <p>
+          <b>Connected Wallet:</b> {currentAccount}
+        </p>
+        <p>
+          <b>Flow Rate: </b>Wei/second: {flowRateDisplay}
+        </p>
           <div style={{ width: "500px" }}>
             <div style={{ background: "white", padding: "20px" }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <img src="https://via.placeholder.com/150x150" alt="Image 1" />
+                <img
+                alt={event.user?.userName}
+                src={event.user?.image || ""}
+                className="creator-image"
+                style={{ height: 70, width: 70 }}
+                />
                 {isMoneyStreaming && (
                   <img
                     src="https://app.superfluid.finance/gifs/stream-loop.gif"
-                    alt="Image 2"
+                    alt="transfer"
+                    className="creator-image"
+                    style={{ height: 70, width: 70 }}
                   />
                 )}
-                <img src="https://via.placeholder.com/150x150" alt="Image 3" />
+              
+              <img
+                alt={user?.userName}
+                src={user?.image || ""}
+                className="creator-image"
+                style={{ height: 70, width: 70 }}
+                />
               </div>
               <div
                 style={{
@@ -411,22 +404,10 @@ export default function Sessionwatch() {
                   marginTop: "20px",
                 }}
               >
-                {currentAccount == "" && (
-                  <button onClick={connectWallet}>Connect Wallet</button>
-                )}
-                {!isMoneyStreaming && (
-                  <button
-                    onClick={() => {
-                      createNewFlow(recipient, 1);
-                    }}
-                  >
-                    Start
-                  </button>
-                )}
                 {isMoneyStreaming && (
                   <button
                     onClick={() => {
-                      deleteExistingFlow(recipient, 1);
+                      deleteExistingFlow(recipient);
                     }}
                   >
                     Stop
