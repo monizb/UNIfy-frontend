@@ -13,7 +13,6 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Store from "./Store"
 import Session from './components/Session';
-import Stream from './components/Stream';
 
 
 

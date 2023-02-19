@@ -34,7 +34,7 @@ const Video = (props) => {
   );
 };
 
-export default function Session(props) {
+export default function Session() {
   const play = {
     fill: true,
     fluid: true,
@@ -93,26 +93,28 @@ export default function Session(props) {
       account = accounts[0];
       console.log("Found an authorized account:", account);
       setCurrentAccount(account);
-      setFlowRateDisplay(calculateFlowRate(1));
+      setFlowRateDisplay(calculateWeiPerSecond(1, 30));
     } else {
       console.log("No authorized account found");
     }
   };
 
-  function calculateFlowRate(amount) {
-    if (typeof Number(amount) !== "number" || isNaN(Number(amount)) === true) {
-      alert("You can only calculate a flowRate based on a number");
-      return;
-    } else if (typeof Number(amount) === "number") {
-      if (Number(amount) === 0) {
-        return 0;
-      }
-      const amountInWei = ethers.BigNumber.from(amount);
-      const monthlyAmount = ethers.utils.formatEther(amountInWei.toString());
-      const calculatedFlowRate = monthlyAmount * 3600 * 24 * 30;
-      return calculatedFlowRate;
-    }
+  function calculateWeiPerSecond(dollars, timeInMinutes) {
+    // Convert dollars to DAIx
+    const daiX = dollars * (10 ** 18);
+  
+    // Convert time to seconds
+    const timeInSeconds = timeInMinutes * 60;
+  
+    // Calculate the amount of DAIx per second
+    const daiXPerSecond = daiX / timeInSeconds;
+  
+    // Calculate the wei per second, assuming 1 DAIx = 1e18 wei
+    const weiPerSecond = Math.floor(daiXPerSecond * (10 ** 18));
+  
+    return weiPerSecond;
   }
+  
 
   useEffect(() => {
     checkIfWalletIsConnected();
@@ -203,7 +205,7 @@ export default function Session(props) {
     <div style={{position: 'relative', height: '80%'}}>
       <Video {...play} />
       <p><b>Connected Wallet:</b> {currentAccount}</p>
-      <p><b>Flow Rate: </b>DaiX {flowRateDisplay}</p>
+      <p><b>Flow Rate: </b>Wei/second: {flowRateDisplay}</p>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center"}}>
         <div style={{width: '500px'}}>
           <div style={{ background: "white", padding: "20px" }}>
