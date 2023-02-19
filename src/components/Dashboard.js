@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Dashboard() {
   const [sessions, setSessions] = React.useState([]);
+  const [mySessions, setMySessions] = React.useState([]);
   const [user, setUser] = React.useState({
     email: "",
     image: "",
@@ -86,6 +87,22 @@ function Dashboard() {
         }
       ).then((res) => {
       setSessions(res.data.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    var token = localStorage.getItem("arcana-token");
+    axios
+      .post(
+        "/session/mysessions",
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ` + token,
+          },
+        }
+      ).then((res) => {
+        setMySessions(res.data.data);
     });
   }, []);
 
@@ -291,134 +308,104 @@ function Dashboard() {
                 </div>
               );
             })}
-            <div className="session-card">
-              {/* <div
-                className="creator-card-session"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)",
-                }}
-              >
-                <p className="session-desc">"Learn how to decentralize any platform and make money off it"</p>
-                <div style={{ display: "flex", alignItems: "center", padding: 10, backgroundColor: "white" }} className="creator-frost">
-                <img
-                  src={"https://unifychain.co/assets/images/artwork/25.jpg"}
-                  alt="creator"
-                  className="creator-image"
-                  style={{height: 70 , width: 70}}
-                />
-                <div style={{display: "flex", justifyContent: "space-between", flex: 1, alignItems: "center"}}>
-                <h3 style={{marginLeft: 15}}>Creator 1</h3>
-                <p>test</p>
-                </div>
-              </div>
-              </div> */}
-              
-            </div>
-            {/* <div
-              className="creator-card"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)",
-              }}
-            >
-              <img
-                src={"https://unifychain.co/assets/images/artwork/27.jpg"}
-                alt="creator"
-                className="creator-image"
-              />
-              <h3>Creator 2</h3>
-              <p>Creator 2's description</p>
-            </div> */}
-            {/* <div
-              className="creator-card"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)",
-              }}
-            >
-              <img
-                src={
-                  "https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"
-                }
-                alt="creator"
-                className="creator-image"
-              />
-              <h3>Creator 3</h3>
-              <p>Creator 3's description</p>
-            </div> */}
-            {/* <div
-              className="creator-card"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)",
-              }}
-            >
-              <img
-                src={"https://unifychain.co/assets/images/artwork/27.jpg"}
-                alt="creator"
-                className="creator-image"
-              />
-              <h3>Creator 2</h3>
-              <p>Creator 2's description</p>
-            </div> */}
-            {/* <div
-              className="creator-card"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)",
-              }}
-            >
-              <img
-                src={
-                  "https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"
-                }
-                alt="creator"
-                className="creator-image"
-              />
-              <h3>Creator 3</h3>
-              <p>Creator 3's description</p>
-            </div> */}
-            {/* <div
-              className="creator-card"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)",
-              }}
-            >
-              <img
-                src={"https://unifychain.co/assets/images/artwork/27.jpg"}
-                alt="creator"
-                className="creator-image"
-              />
-              <h3>Creator 2</h3>
-              <p>Creator 2's description</p>
-            </div> */}
-            {/* <div
-              className="creator-card"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)",
-              }}
-            >
-              <img
-                src={
-                  "https://www.arabnews.com/sites/default/files/styles/n_670_395/public/2021/09/09/2802471-1141576147.jpg?itok=iBUxiaoP"
-                }
-                alt="creator"
-                className="creator-image"
-              />
-              <h3>Creator 3</h3>
-              <p>Creator 3's description</p>
-            </div> */}
           </div>
         </div>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
+      <Events />
+        <div className="creator-spotlight" style={{ marginTop: 10 }}>
+          <div className="creators-list">
+            {mySessions.map((session) => {
+              return (
+                <div className="session-card" style={{margin: 15}}>
+                  <div
+                    className="creator-card-session"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)",
+                    }}
+                  >
+                    <p className="session-desc">
+                      "{session.sessionName}"
+                    </p>
+                    <p className="session-desc">
+                      {session.sessionDesc}
+                    </p>
+                    <p className="session-desc">
+                      Scheduled for {new Date(session.date).toDateString()} at {session.startTime}
+                    </p>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: 10,
+                        backgroundColor: "white",
+                      }}
+                      className="creator-frost"
+                    >
+                      <img
+                        src={
+                          session.user.image
+                        }
+                        alt="creator"
+                        className="creator-image"
+                        style={{ height: 70, width: 70 }}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          flex: 1,
+                          alignItems: "center",
+                        }}
+                      >
+                        <h3 style={{ marginLeft: 15 }}>{session.user.userName}</h3>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <h3 style={{ marginRight: 15 }}>{session.fee} ETH/DAIx</h3>
+                          {session.user._id != user.id ? (
+                            <Button
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#100615",
+                              color: "white",
+                              borderRadius: 10,
+                              width: 100,
+                              height: 40,
+                            }}
+                            onClick={() => {window.location.replace("/sessions/watch/" + session._id)}}
+                          >
+                            Join
+                          </Button>
+                          ): (
+                            <Button
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#100615",
+                              color: "white",
+                              borderRadius: 10,
+                              width: 100,
+                              height: 40,
+                            }}
+                            onClick={() => {window.location.replace("/sessions/" + session._id)}}
+                          >
+                            Start
+                          </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </TabPanel>
     </div>
   );
