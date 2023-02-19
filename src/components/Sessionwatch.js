@@ -337,6 +337,21 @@ export default function Sessionwatch() {
             {event.startTime}
           </p>
         </div>
+        <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          textAlign: "center",
+          justifyContent: "center",
+          marginTop: 15,
+        }}
+      >
+        <p className="tip-style">Livestream powered by</p>
+        <img
+          style={{ height: 30 }}
+          src="https://northzone.com/wp-content/uploads/2020/03/livepeer-web.png"
+        />
+      </div>
         <ReactHlsPlayer
           src={
             "https://livepeercdn.studio/hls/" +
@@ -348,6 +363,22 @@ export default function Sessionwatch() {
           width="100%"
           height="auto"
         />
+        <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          textAlign: "center",
+          justifyContent: "center",
+          marginTop: 15,
+          marginLeft: 50
+        }}
+      >
+        <p className="tip-style">Live Token Streaming powered by</p>
+        <img
+          style={{ height: 20, marginLeft: 10 }}
+          src="https://d33wubrfki0l68.cloudfront.net/492706482c9f1aebee7259b32cca255e31dee861/28f04/assets/img/logo.svg"
+        />
+      </div>
         <p>
           <b>Connected Wallet:</b> {currentAccount}
         </p>
