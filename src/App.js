@@ -47,7 +47,6 @@ function App() {
         <PrivateRoute component={(Dashboard)} authenticated={authentication} path={"/u/nav/dashboard"} exact />
         <PrivateRoute component={(Onboarding)} authenticated={authentication} path={"/u/nav/onboarding"} exact />
         <PrivateRoute component={(CreateEvent)} authenticated={authentication} path={"/u/nav/dashboard/events/create"} exact />
-        <PrivateRoute component={(Stream)} authenticated={authentication} path={"/u/nav/stream"} exact />
         <Route path="*" component={NotFoundPage} exact />
       </Switch>
     </Store>
