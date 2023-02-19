@@ -392,8 +392,50 @@ export default function Session() {
             {event.startTime}
           </p>
         </div>
+       
         <div style={{display: event?.user?._id != user?.id ? "none": "flex", alignItems: "center"}}>
+        <div>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          textAlign: "center",
+          justifyContent: "center",
+        }}>
+        <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          textAlign: "center",
+          justifyContent: "center",
+          marginTop: 15,
+        }}
+      >
+        <p className="tip-style">Livestream powered by</p>
+        <img
+          style={{ height: 30 }}
+          src="https://northzone.com/wp-content/uploads/2020/03/livepeer-web.png"
+        />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          textAlign: "center",
+          justifyContent: "center",
+          marginTop: 15,
+          marginLeft: 50
+        }}
+      >
+        <p className="tip-style">Live Token Streaming powered by</p>
+        <img
+          style={{ height: 20, marginLeft: 10 }}
+          src="https://d33wubrfki0l68.cloudfront.net/492706482c9f1aebee7259b32cca255e31dee861/28f04/assets/img/logo.svg"
+        />
+      </div>
+        </div>
           <video className="App-video" ref={videoEl} />
+        </div>
+
           <div style={{ display: "flex", alignItems: "center", textAlign: "center" }}>
           {started ? <p>You are live now! The stage is yours</p>: <Button
                            
@@ -408,7 +450,8 @@ export default function Session() {
                          >
                            Start Streaming
                          </Button>}
-                         <Button
+                        <div>
+                        <Button
                            
                            style={{
                              backgroundColor: "#100615",
@@ -421,7 +464,10 @@ export default function Session() {
                          >
                            View Token Stream On Superfluid
                          </Button>
+                         
+                        </div>
           </div>
+          
         </div>
         {/* {event?.user?._id === user?.id ?  : null } */}
       </div>
