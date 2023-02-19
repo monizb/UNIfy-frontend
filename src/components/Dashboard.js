@@ -91,6 +91,7 @@ function Dashboard() {
 
   useEffect(() => {
     let user = jwt(localStorage.getItem("arcana-token"))
+    console.log(user)
     setUser(user)
 }, [])
   const history = useHistory();
@@ -254,7 +255,7 @@ function Dashboard() {
                           }}
                         >
                           <h3 style={{ marginRight: 15 }}>{session.fee} ETH/DAIx</h3>
-                          {session.user._id === user._id ? (
+                          {session.user._id != user.id ? (
                             <Button
                             variant="contained"
                             style={{
@@ -264,6 +265,7 @@ function Dashboard() {
                               width: 100,
                               height: 40,
                             }}
+                            onClick={() => {window.location.replace("/sessions/watch/" + session._id)}}
                           >
                             Join
                           </Button>
@@ -277,6 +279,7 @@ function Dashboard() {
                               width: 100,
                               height: 40,
                             }}
+                            onClick={() => {window.location.replace("/sessions/" + session._id)}}
                           >
                             Start
                           </Button>

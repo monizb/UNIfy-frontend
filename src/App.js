@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Store from "./Store"
 import Session from './components/Session';
+import Sessionwatch from './components/Sessionwatch';
 
 
 
@@ -40,13 +41,14 @@ function App() {
       <Switch>
         <Route path={"/"} component={(Main)} exact />
         <Route path="/:username" component={Booking} exact />
-        <Route path="/:username/:event" component={Booking} exact />
-        {/* <Route path="/my/hry/test" component={Test} exact />
-        <Route path="/my/hry/testt" component={Session} exact /> */}
+        {/* <Route path="/:username/:event" component={Booking} exact /> */}
+        <Route path="/my/hry/test" component={Test} exact />
+        <Route path="/my/hry/testt" component={Session} exact />
         <PrivateRoute component={(Dashboard)} authenticated={authentication} path={"/u/nav/dashboard"} exact />
         <PrivateRoute component={(Onboarding)} authenticated={authentication} path={"/u/nav/onboarding"} exact />
         <PrivateRoute component={(CreateEvent)} authenticated={authentication} path={"/u/nav/dashboard/events/create"} exact />
         <PrivateRoute component={(Session)} authenticated={authentication} path={"/sessions/:sessionid"} exact />
+        <PrivateRoute component={(Sessionwatch)} authenticated={authentication} path={"/sessions/watch/:sessionid"} exact />
         <Route path="*" component={NotFoundPage} exact />
       </Switch>
     </Store>

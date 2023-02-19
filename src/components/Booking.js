@@ -126,48 +126,6 @@ export default function Booking() {
                                 </Grid>
                             )
                         })}
-
-                        {/* <Grid item xs={6}>
-                            <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #FF4F01" }}><p className="select" style={{ marginBottom: "25px" }}>30 min Product Demo</p>
-                                <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
-                                </div>
-                            </Card>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #FA275F" }}><p className="select" style={{ marginBottom: "25px" }}>Technical Support</p>
-                                <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
-                                </div>
-                            </Card>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #0299FF" }}><p className="select" style={{ marginBottom: "25px" }}>Customer Success Stories</p>
-                                <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(2)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
-                                </div>
-                            </Card>
-                        </Grid> */}
-                        {/* <Grid item xs={6}>
-                            <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #0299FF" }}><p className="select">Customer Success Stories</p>
-                                <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(1)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
-                                </div>
-                            </Card>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Card style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none", borderTop: "5px solid #0299FF" }}><p className="select">Customer Success Stories</p>
-                                <div style={{ width: "100%", float: "right" }}>
-                                    <Button style={{ backgroundColor: "#EEF5FF", width: "100%" }} onClick={() => setStage(1)}><ArrowForwardIcon style={{ color: "#100615", fontSize: "25px" }} /></Button>
-                                </div>
-                            </Card>
-                        </Grid> */}
-                        {/* <Grid item xs={6}>
-                            <Paper style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none" }}>xs=6</Paper>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Paper style={{ border: "1.5px solid #DADADA", borderRadius: "10px", padding: "15px", boxShadow: "none" }}>xs=6</Paper>
-                        </Grid> */}
                     </Grid>
 
                 </div>

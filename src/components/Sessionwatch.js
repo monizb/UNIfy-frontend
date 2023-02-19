@@ -7,11 +7,12 @@ import FlashOnIcon from "@material-ui/icons/FlashOn";
 import { Framework } from "@superfluid-finance/sdk-core";
 import axios from "../configs/axios";
 import { useParams } from "react-router-dom";
-import { Backdrop, CircularProgress, Button } from "@material-ui/core";
+import { Backdrop, CircularProgress } from "@material-ui/core";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import "../styles/logo.css";
 import { Client } from "@livepeer/webrtmp-sdk";
 import jwt from "jwt-decode";
+import ReactHlsPlayer from "react-hls-player";
 let account;
 let provider;
 let signer;
@@ -45,7 +46,7 @@ const Video = (props) => {
   );
 };
 
-export default function Session() {
+export default function Sessionwatch() {
   const { sessionid } = useParams();
   const [loading, setLoading] = useState(true);
   const [event, setEvent] = useState({});
@@ -62,24 +63,6 @@ export default function Session() {
     console.log(user);
     setUser(user);
   }, []);
-
-  const inputEl = useRef(null);
-  const videoEl = useRef(null);
-  const stream = useRef(null);
-
-  useEffect(() => {
-    (async () => {
-      videoEl.current.volume = 0;
-
-      stream.current = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-
-      videoEl.current.srcObject = stream.current;
-      videoEl.current.play();
-    })();
-  });
 
   useEffect(() => {
     var token = localStorage.getItem("arcana-token");
@@ -281,38 +264,6 @@ export default function Session() {
     },
   }));
 
-  const onButtonClick = async () => {
-    
-    const streamKey = event.streamKey
-
-    if (!stream.current) {
-      alert("Video stream was not started.");
-    }
-
-    if (!streamKey) {
-      alert("Invalid streamKey.");
-      return;
-    }
-
-    const client = new Client();
-
-    const session = client.cast(stream.current, streamKey);
-
-    session.on("open", () => {
-      console.log("Stream started.");
-      setStarted(true);
-      // alert("Stream started; visit Livepeer Dashboard.");
-    });
-
-    session.on("close", () => {
-      console.log("Stream stopped.");
-    });
-
-    session.on("error", (err) => {
-      console.log("Stream error.", err.message);
-    });
-  };
-
   const classes = useStyles();
 
   return (
@@ -320,38 +271,32 @@ export default function Session() {
       <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      {/* <Video {...play} />
-      <p><b>Connected Wallet:</b> {currentAccount}</p>
-      <p><b>Flow Rate: </b>Wei/second: {flowRateDisplay}</p>
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center"}}>
-        <div style={{width: '500px'}}>
-          <div style={{ background: "white", padding: "20px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <img src="https://via.placeholder.com/150x150" alt="Image 1" />
-              {isMoneyStreaming &&
-                <img src="https://app.superfluid.finance/gifs/stream-loop.gif" alt="Image 2" />
-              }
-              <img src="https://via.placeholder.com/150x150" alt="Image 3" />
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
-            {currentAccount == "" &&
-              <button onClick={connectWallet}>Connect Wallet</button>        
-            }
-            {!isMoneyStreaming &&
-              <button onClick={() => {
-                createNewFlow(recipient,1);
-              }}
-              >Start</button>
-            }
-            {isMoneyStreaming &&
-              <button onClick={() => {
-                deleteExistingFlow(recipient,1);
-              }}>Stop</button>
-            }
-            </div>
-          </div>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          margin: "auto",
+          padding: "0px",
+          backgroundColor: "#100615",
+          justifyContent: "center",
+          height: "40vh",
+        }}
+      >
+        <div
+          style={{
+            justifyContent: "center",
+            display: "flex",
+            verticalAlign: "middle",
+          }}
+        >
+          <FlashOnIcon
+            style={{ color: "orange", fontSize: "25PX", marginTop: "30px" }}
+          />
+          <p className="powered">
+            by <span className="poweredlogo">UNIfy</span>
+          </p>
         </div>
-      </div> */}
+      </div>
       <div
         style={{
           margin: "auto",
@@ -392,63 +337,73 @@ export default function Session() {
             {event.startTime}
           </p>
         </div>
-        <div style={{display: event?.user?._id != user?.id ? "none": "flex", alignItems: "center"}}>
-          <video className="App-video" ref={videoEl} />
-          <div style={{ display: "flex", alignItems: "center", textAlign: "center" }}>
-          {started ? <p>You are live now! The stage is yours</p>: <Button
-                           
-                           style={{
-                             backgroundColor: "#100615",
-                             color: "white",
-                             borderRadius: 10,
-                             padding: 10,
-                             marginLeft: 50
-                           }}
-                           onClick={onButtonClick}
-                         >
-                           Start Streaming
-                         </Button>}
-                         <Button
-                           
-                           style={{
-                             backgroundColor: "#100615",
-                             color: "white",
-                             borderRadius: 10,
-                             padding: 10,
-                             marginLeft: 50
-                           }}
-                           onClick={()=> window.open(`https://app.superfluid.finance/history?view=` + event?.wallet, "_blank")}
-                         >
-                           View Token Stream On Superfluid
-                         </Button>
-          </div>
-        </div>
-        {/* {event?.user?._id === user?.id ?  : null } */}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          margin: "auto",
-          padding: "0px",
-          backgroundColor: "#100615",
-          justifyContent: "center",
-          height: "40vh",
-        }}
-      >
+        <ReactHlsPlayer
+          src={
+            "https://livepeercdn.studio/hls/" +
+            event?.streamDetails?.playbackId +
+            "/index.m3u8"
+          }
+          autoPlay={false}
+          controls={true}
+          width="100%"
+          height="auto"
+        />
+        <p>
+          <b>Connected Wallet:</b> {currentAccount}
+        </p>
+        <p>
+          <b>Flow Rate: </b>Wei/second: {flowRateDisplay}
+        </p>
         <div
           style={{
-            justifyContent: "center",
             display: "flex",
-            verticalAlign: "middle",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <FlashOnIcon
-            style={{ color: "orange", fontSize: "25PX", marginTop: "30px" }}
-          />
-          <p className="powered">
-            by <span className="poweredlogo">UNIfy</span>
-          </p>
+          <div style={{ width: "500px" }}>
+            <div style={{ background: "white", padding: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <img src="https://via.placeholder.com/150x150" alt="Image 1" />
+                {isMoneyStreaming && (
+                  <img
+                    src="https://app.superfluid.finance/gifs/stream-loop.gif"
+                    alt="Image 2"
+                  />
+                )}
+                <img src="https://via.placeholder.com/150x150" alt="Image 3" />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "20px",
+                }}
+              >
+                {currentAccount == "" && (
+                  <button onClick={connectWallet}>Connect Wallet</button>
+                )}
+                {!isMoneyStreaming && (
+                  <button
+                    onClick={() => {
+                      createNewFlow(recipient, 1);
+                    }}
+                  >
+                    Start
+                  </button>
+                )}
+                {isMoneyStreaming && (
+                  <button
+                    onClick={() => {
+                      deleteExistingFlow(recipient, 1);
+                    }}
+                  >
+                    Stop
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
