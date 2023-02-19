@@ -71,10 +71,10 @@ export default function Sessionwatch() {
           Authorization: `Bearer ` + token,
         },
       })
-      .then((res) => {
+      .then(async (res) => {
         setLoading(false);
         setEvent(res.data.data);
-        checkIfWalletIsConnected(res.data.data);
+        await checkIfWalletIsConnected(res.data.data);
         setRecipient(res.data.data.wallet);
       })
       .catch((err) => {
@@ -145,6 +145,7 @@ export default function Sessionwatch() {
       console.log(event.fee);
       createNewFlow("0xe478C4CA051f64074Ae8dDbFEAB8B9a013f9A0CB", parseInt(4));
     } else {
+      connectWallet();
       console.log("No authorized account found");
     }
   };
