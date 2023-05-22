@@ -40,7 +40,7 @@
     "react-redux": "^7.2.4",
     "react-redux-firebase": "^3.10.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "5.0.0",
     "react-time-range": "^1.0.4",
     "react-timezone-select": "^1.0.3",
     "react-use": "^17.2.4",
